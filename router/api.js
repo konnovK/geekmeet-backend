@@ -6,9 +6,9 @@ const user = require('./user')
 api.use('/user', user)
 
 
-api.get('/', (req, res) => {
-    res.send('/')
-})
+// api.get('/', (req, res) => {
+//     res.send('/')
+// })
 
 
 module.exports = api

@@ -9,9 +9,8 @@ const fileUpload = require('express-fileupload');
 const user = express.Router()
 user.use(express.json())
 
-user.use(fileUpload({}))
 user.use(express.static('public'))
-
+user.use(fileUpload({}))
 
 
 let createToken = (user) => {
@@ -84,6 +83,26 @@ user.post('/register', async (req, res) => {
         return;
     }
 
+    let users = await db.User.findAll({
+        where: {
+            login: login
+        }
+    })
+
+    if (users.length > 0) {
+        return res.status(400).json({message: 'user with this login существует'})
+    }
+
+    users = await db.User.findAll({
+        where: {
+            email: email
+        }
+    })
+
+    if (users.length > 0) {
+        return res.status(400).json({message: 'user with this email существует'})
+    }
+
     let passwordHash = hashPassword(password)
 
     let user = await db.User.create({
@@ -93,15 +112,14 @@ user.post('/register', async (req, res) => {
         about
     })
 
-    res.json({
-        id: user.id,
-        login: user.login
-    })
+    let token = createToken(user)
+    res.json({token: token})
 })
 
 
 user.put('/register', async (req, res) => {
-    await req.files.avatar.mv('/public' + req.files.avatar.name)
+    // TODO: проверить имена на уникальность
+    await req.files.avatar.mv('/public/' + req.files.avatar.name)
     let filename = req.files.avatar.name
     let login = req.body.login
     if (!login) {
