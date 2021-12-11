@@ -40,4 +40,48 @@ feed.get('/',  async (req, res) => {
     res.json(result)
 })
 
+feed.get('/:id', async (req, res) => {
+    let id = req.params['id']
+    let event = await db.Event.findByPk(id)
+
+    if (event === null) {
+        return res.status(400).json({message: 'event not exists'})
+    }
+
+    let eventTagRels = await db.EventTagRel.findAll({
+        where: {
+            eventId: id
+        }
+    })
+    let tags = await db.Tag.findAll({})
+
+    let eventTagNames = []
+    eventTagRels.forEach((etr) => {
+        eventTagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
+    })
+
+    let address = await db.Address.findByPk(event.addressId)
+
+    if (address === null) {
+        return res.status(400).json({message: 'bad address'})
+    }
+
+    let result = {
+        id: id,
+        name: event.name,
+        date: event.date,
+        about: event.about,
+        creatorId: event.creatorId,
+        address: {
+            name: address.name,
+            address: address.address,
+            metro: address.metro
+        },
+        seats: event.seats,
+        tags: eventTagNames
+    }
+
+    return res.json(result)
+})
+
 module.exports = feed
