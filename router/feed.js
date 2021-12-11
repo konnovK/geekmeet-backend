@@ -4,8 +4,9 @@ const auth = require('../authorization')
 
 const feed = express.Router()
 feed.use(express.json())
+feed.use(auth)
 
-feed.get('/', [auth], async (req, res) => {
+feed.get('/',  async (req, res) => {
     let events = await db.Event.findAll({
         attributes: ['id', 'name', 'date', 'addressId', 'seats']
     })
