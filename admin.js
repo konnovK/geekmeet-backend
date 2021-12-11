@@ -36,6 +36,15 @@ admin.get('/', async (req, res) => {
             seats: 42
         })
 
+        let event2 = await db.Event.create({
+            name: 'para sherbakova',
+            date: new Date(),
+            addressId: address1.id,
+            creatorId: user1.id,
+            about: 'qwerty1231',
+            seats: 0
+        })
+
         await db.EventTagRel.create({
             eventId: event1.id,
             tagId: tag1.id
@@ -43,6 +52,11 @@ admin.get('/', async (req, res) => {
 
         await db.EventTagRel.create({
             eventId: event1.id,
+            tagId: tag2.id
+        })
+
+        await db.EventTagRel.create({
+            eventId: event2.id,
             tagId: tag2.id
         })
 
