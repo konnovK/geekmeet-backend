@@ -204,6 +204,19 @@ const GroupMessage = sequelize.define('GroupMessage', {
 module.exports.GroupMessage = GroupMessage
 
 
+const Favorites = sequelize.define('Favorites', {
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    eventId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+})
+module.exports.Favorites = Favorites
+
+
 
 async function init() {
     await sequelize.sync()
