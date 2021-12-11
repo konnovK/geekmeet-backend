@@ -209,4 +209,14 @@ async function init() {
     await sequelize.sync()
 }
 
+async function drop() {
+    await sequelize.drop()
+}
+
+async function truncate() {
+    await sequelize.truncate()
+}
+
 module.exports.init = init
+module.exports.drop = drop
+module.exports.truncate = truncate
