@@ -23,6 +23,10 @@ if (DEBUG) {
     server.use('/admin', admin)
 }
 
+server.get('/', (req, res) => {
+    res.send('it works!')
+})
+
 
 server.listen(80, async () => {
     if (DEBUG) {
