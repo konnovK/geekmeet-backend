@@ -7,6 +7,11 @@ feed.use(express.json())
 feed.use(auth)
 
 feed.get('/',  async (req, res) => {
+
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
     let events = await db.Event.findAll({
         attributes: ['id', 'name', 'date', 'addressId', 'seats']
     })
@@ -14,7 +19,20 @@ feed.get('/',  async (req, res) => {
     let addresses = await db.Address.findAll({})
 
     let eventTagRels = await db.EventTagRel.findAll({})
+
     let tags = await db.Tag.findAll({})
+
+    let favorites = await db.Favorites.findAll({
+        where: {
+            userId: req._id
+        }
+    })
+
+    let jrs = await db.JoinRequest.findAll({
+        where: {
+            userId: req._id
+        }
+    })
 
     let result = []
 
@@ -27,13 +45,23 @@ feed.get('/',  async (req, res) => {
         for (let etr of etrs) {
             eventTagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
         }
+
+        let isFavorite = favorites.filter((favorite) => favorite.eventId === event.id).length > 0;
+
+        let jr = jrs.filter((jr) => jr.eventId === event.id)[0]
+
+        let accepted = jr ? jr.accepted : null
+
+
         result.push({
             id: event.id,
             name: event.name,
             date: event.date,
             tags: eventTagNames,
             address: addressName,
-            seats: event.seats
+            seats: event.seats,
+            isFavorite: isFavorite,
+            accepted: accepted
         })
     }
 
