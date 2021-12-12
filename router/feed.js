@@ -84,4 +84,19 @@ feed.get('/:id', async (req, res) => {
     return res.json(result)
 })
 
+feed.get('/:id/members', async (req, res) => {
+    let id = req.params['id']
+
+    let jrs = await db.JoinRequest.findAll({
+        where: {
+            eventId: id,
+            accepted: true
+        }
+    })
+    let members = []
+    jrs.forEach((jr) => members.push(jr.userId))
+
+    return res.json(members)
+})
+
 module.exports = feed
