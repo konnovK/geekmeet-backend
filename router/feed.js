@@ -6,6 +6,9 @@ const feed = express.Router()
 feed.use(express.json())
 feed.use(auth)
 
+/**
+ * Получение ленты ивентов
+ */
 feed.get('/',  async (req, res) => {
 
     if (!req._id) {
@@ -68,6 +71,9 @@ feed.get('/',  async (req, res) => {
     res.json(result)
 })
 
+/**
+ * Получение информации об ивенте по id
+ */
 feed.get('/:id', async (req, res) => {
     let id = req.params['id']
     let event = await db.Event.findByPk(id)
@@ -112,6 +118,9 @@ feed.get('/:id', async (req, res) => {
     return res.json(result)
 })
 
+/**
+ * Получение участников ивента по id ивента
+ */
 feed.get('/:id/members', async (req, res) => {
     let id = req.params['id']
 
