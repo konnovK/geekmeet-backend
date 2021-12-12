@@ -99,4 +99,39 @@ feed.get('/:id/members', async (req, res) => {
     return res.json(members)
 })
 
+/**
+ * Добавление в избранное или удаление из избранного
+ */
+feed.patch('/:id', async (req, res) => {
+    let eventId = req.params['id']
+    let userId = req._id
+
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    let favorites = await db.Favorites.findAll({
+        where: {
+            userId: userId,
+            eventId: eventId
+        }
+    })
+
+    if (favorites.length === 0) {
+        await db.Favorites.create({
+            userId: userId,
+            eventId: eventId
+        })
+        return res.json({message: 'added to favorites'})
+    } else {
+        await db.Favorites.destroy({
+            where: {
+                userId: userId,
+                eventId: eventId
+            }
+        })
+        return res.json({message: 'removed from favorites'})
+    }
+})
+
 module.exports = feed
