@@ -9,7 +9,6 @@ const sequelize = new Sequelize({
 
 /**
  * Модель адреса
- * @type {ModelCtor<Model>}
  */
 const Address = sequelize.define('Address',{
     name: {
@@ -30,7 +29,6 @@ module.exports.Address = Address
 
 /**
  * Модель пользователя
- * @type {ModelCtor<Model>}
  */
 const User = sequelize.define('User', {
     login: {
@@ -58,7 +56,6 @@ module.exports.User = User
 
 /**
  * Модель ивента
- * @type {ModelCtor<Model>}
  */
 const Event = sequelize.define('Event', {
     name: {
@@ -92,7 +89,6 @@ module.exports.Event = Event
 
 /**
  * Модель тэга
- * @type {ModelCtor<Model>}
  */
 const Tag = sequelize.define('Tag', {
     title: {
@@ -106,7 +102,6 @@ module.exports.Tag = Tag
 
 /**
  * Модель связи пользователя и тэга
- * @type {ModelCtor<Model>}
  */
 const UserTagRel = sequelize.define('UserTagRel', {
     userId: {
@@ -124,7 +119,6 @@ module.exports.UserTagRel = UserTagRel
 
 /**
  * Модель запроса в друзья
- * @type {ModelCtor<Model>}
  */
 const FriendRequest = sequelize.define('FriendRequest', {
     fromUserId: {
@@ -146,7 +140,6 @@ module.exports.FriendRequest = FriendRequest
 
 /**
  * Модель заявки на ивент
- * @type {ModelCtor<Model>}
  */
 const JoinRequest = sequelize.define('JoinRequest', {
     userId: {
@@ -168,7 +161,6 @@ module.exports.JoinRequest = JoinRequest
 
 /**
  * Модель связи ивента и тэга
- * @type {ModelCtor<Model>}
  */
 const EventTagRel = sequelize.define('EventTagRel', {
     eventId: {
@@ -186,7 +178,6 @@ module.exports.EventTagRel = EventTagRel
 
 /**
  * Модель сообщения личного чата
- * @type {ModelCtor<Model>}
  */
 const PrivateMessage = sequelize.define('PrivateMessage', {
     fromUserId: {
@@ -212,7 +203,6 @@ module.exports.PrivateMessage = PrivateMessage
 
 /**
  * Модель сообщения группового чата
- * @type {ModelCtor<Model>}
  */
 const GroupMessage = sequelize.define('GroupMessage', {
     fromUserId: {
@@ -238,7 +228,6 @@ module.exports.GroupMessage = GroupMessage
 
 /**
  * Модель избранных ивентов
- * @type {ModelCtor<Model>}
  */
 const Favorites = sequelize.define('Favorites', {
     userId: {
