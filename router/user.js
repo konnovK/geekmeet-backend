@@ -27,6 +27,9 @@ let hashPassword = (password) => {
 }
 
 
+/**
+ * Авторизация
+ */
 user.post('/login', async (req, res) => {
     let login = req.body.login
     let password = req.body.password
@@ -66,6 +69,9 @@ user.post('/login', async (req, res) => {
 })
 
 
+/**
+ * Регистрация: логин, пароль, эл. почта, о себе
+ */
 user.post('/register', async (req, res) => {
     let {login, password, email} = req.body
     let about = req.body.about || ''
@@ -117,6 +123,9 @@ user.post('/register', async (req, res) => {
 })
 
 
+/**
+ * Регистрация: добавление аватара
+ */
 user.put('/register', async (req, res) => {
     // TODO: проверить имена на уникальность
     await req.files.avatar.mv('/public/' + req.files.avatar.name)
@@ -134,7 +143,11 @@ user.put('/register', async (req, res) => {
     res.status(200).json({avatar: filename})
 })
 
+
 const auth = require('../authorization')
+/**
+ * Получение информации о пользователе по id
+ */
 user.get('/:id', [auth], async (req, res) => {
     let id = req.params['id']
 
