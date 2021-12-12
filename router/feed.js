@@ -1,6 +1,8 @@
 const express = require('express')
 const db = require('../db')
+const { Op } = require('sequelize')
 const auth = require('../authorization')
+const moment = require('moment')
 const tags = require('./tags')
 
 const feed = express.Router()
@@ -17,7 +19,12 @@ feed.get('/',  async (req, res) => {
     }
 
     let events = await db.Event.findAll({
-        attributes: ['id', 'name', 'date', 'addressId', 'seats']
+        attributes: ['id', 'name', 'date', 'addressId', 'seats'],
+        where: {
+            date: {
+                [Op.gte]: moment().toDate()
+            }
+        }
     })
 
     let addresses = await db.Address.findAll({})
