@@ -1,6 +1,7 @@
 const express = require('express')
 const db = require('../db')
 const auth = require('../authorization')
+const tags = require('./tags')
 
 const feed = express.Router()
 feed.use(express.json())
@@ -82,18 +83,6 @@ feed.get('/:id', async (req, res) => {
         return res.status(400).json({message: 'event not exists'})
     }
 
-    let eventTagRels = await db.EventTagRel.findAll({
-        where: {
-            eventId: id
-        }
-    })
-    let tags = await db.Tag.findAll({})
-
-    let eventTagNames = []
-    eventTagRels.forEach((etr) => {
-        eventTagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
-    })
-
     let address = await db.Address.findByPk(event.addressId)
 
     if (address === null) {
@@ -112,7 +101,7 @@ feed.get('/:id', async (req, res) => {
             metro: address.metro
         },
         seats: event.seats,
-        tags: eventTagNames
+        tags: tags.getEventTags(id)
     }
 
     return res.json(result)
