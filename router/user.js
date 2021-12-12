@@ -4,6 +4,7 @@ const { Op } = require('sequelize')
 const md5 = require('md5')
 const jwt = require('jsonwebtoken')
 const fileUpload = require('express-fileupload');
+const tags = require('./tags')
 
 
 const user = express.Router()
@@ -155,23 +156,38 @@ user.get('/:id', [auth], async (req, res) => {
         return res.status(401).json({message: 'authorization error'})
     }
 
-    let frs1 = await db.FriendRequest.findAll({
+    // let frs1 = await db.FriendRequest.findAll({
+    //     where: {
+    //         fromUserId: req._id,
+    //         toUserId: id,
+    //         accepted: true
+    //     }
+    // })
+    //
+    // let frs2 = await db.FriendRequest.findAll({
+    //     where: {
+    //         fromUserId: id,
+    //         toUserId: req._id,
+    //         accepted: true
+    //     }
+    // })
+
+    let frs = await db.FriendRequest.findAll({
         where: {
-            fromUserId: req._id,
-            toUserId: id,
-            accepted: true
+            [Op.or]: [{
+                fromUserId: req._id,
+                toUserId: id,
+                accepted: true
+            }, {
+                fromUserId: id,
+                toUserId: req._id,
+                accepted: true
+            }]
         }
     })
 
-    let frs2 = await db.FriendRequest.findAll({
-        where: {
-            fromUserId: id,
-            toUserId: req._id,
-            accepted: true
-        }
-    })
-
-    let isFriend = frs1.length > 0 || frs2.length > 0
+    // let isFriend = frs1.length > 0 || frs2.length > 0
+    let isFriend = frs.length > 0
 
 
     let user = await db.User.findAll({
@@ -188,24 +204,24 @@ user.get('/:id', [auth], async (req, res) => {
     } else {
         let _user = user[0]
 
-        let tagNames = []
+        // let tagNames = []
 
-        let tags = await db.Tag.findAll({})
-        let etrs = await db.UserTagRel.findAll({
-            where: {
-                userId: _user.id
-            }
-        })
-        etrs.forEach((etr) =>
-            tagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
-        )
+        // let tags = await db.Tag.findAll({})
+        // let etrs = await db.UserTagRel.findAll({
+        //     where: {
+        //         userId: _user.id
+        //     }
+        // })
+        // etrs.forEach((etr) =>
+        //     tagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
+        // )
 
         let result = {
             isFriend: isFriend,
             id: _user.id,
             login: _user.login,
             about: _user.about,
-            tags: tagNames
+            tags: tags.getUserTags(_user.id) // tagNames
         }
 
         res.json(result)
