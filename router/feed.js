@@ -105,6 +105,10 @@ feed.get('/:id/members', async (req, res) => {
 feed.post('/:id/join', async (req, res) => {
     let id = req.params['id']
 
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
     let jrs = await db.JoinRequest.findAll({
         where: {
             eventId: id,
