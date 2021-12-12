@@ -91,6 +91,11 @@ admin.get('/', async (req, res) => {
             accepted: false
         })
 
+        await db.Favorites.create({
+            userId: user2.id,
+            eventId: event1.id
+        })
+
         return res.json({})
     } catch (e) {
         console.log(e)
