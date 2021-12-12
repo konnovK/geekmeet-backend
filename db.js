@@ -5,7 +5,12 @@ const sequelize = new Sequelize({
     storage: './db.sqlite'
 })
 
-// Адрес ивента
+
+
+/**
+ * Модель адреса
+ * @type {ModelCtor<Model>}
+ */
 const Address = sequelize.define('Address',{
     name: {
         type: DataTypes.STRING,
@@ -23,7 +28,10 @@ module.exports.Address = Address
 
 
 
-// Пользователь
+/**
+ * Модель пользователя
+ * @type {ModelCtor<Model>}
+ */
 const User = sequelize.define('User', {
     login: {
         type: DataTypes.STRING,
@@ -48,7 +56,10 @@ module.exports.User = User
 
 
 
-// Ивент
+/**
+ * Модель ивента
+ * @type {ModelCtor<Model>}
+ */
 const Event = sequelize.define('Event', {
     name: {
         type: DataTypes.STRING,
@@ -79,8 +90,10 @@ const Event = sequelize.define('Event', {
 module.exports.Event = Event
 
 
-
-// Тэг
+/**
+ * Модель тэга
+ * @type {ModelCtor<Model>}
+ */
 const Tag = sequelize.define('Tag', {
     title: {
         type: DataTypes.STRING,
@@ -91,7 +104,10 @@ module.exports.Tag = Tag
 
 
 
-// Связь пользователя и тэга
+/**
+ * Модель связи пользователя и тэга
+ * @type {ModelCtor<Model>}
+ */
 const UserTagRel = sequelize.define('UserTagRel', {
     userId: {
         type: DataTypes.INTEGER,
@@ -106,7 +122,10 @@ module.exports.UserTagRel = UserTagRel
 
 
 
-// Запрос в друзья
+/**
+ * Модель запроса в друзья
+ * @type {ModelCtor<Model>}
+ */
 const FriendRequest = sequelize.define('FriendRequest', {
     fromUserId: {
         type: DataTypes.INTEGER,
@@ -125,7 +144,10 @@ module.exports.FriendRequest = FriendRequest
 
 
 
-// таблица заявок пользователей на ивент
+/**
+ * Модель заявки на ивент
+ * @type {ModelCtor<Model>}
+ */
 const JoinRequest = sequelize.define('JoinRequest', {
     userId: {
         type: DataTypes.INTEGER,
@@ -144,7 +166,10 @@ module.exports.JoinRequest = JoinRequest
 
 
 
-// таблица ивент-тэг
+/**
+ * Модель связи ивента и тэга
+ * @type {ModelCtor<Model>}
+ */
 const EventTagRel = sequelize.define('EventTagRel', {
     eventId: {
         type: DataTypes.INTEGER,
@@ -159,7 +184,10 @@ module.exports.EventTagRel = EventTagRel
 
 
 
-// сообщения личного чата
+/**
+ * Модель сообщения личного чата
+ * @type {ModelCtor<Model>}
+ */
 const PrivateMessage = sequelize.define('PrivateMessage', {
     fromUserId: {
         type: DataTypes.INTEGER,
@@ -182,7 +210,10 @@ module.exports.PrivateMessage = PrivateMessage
 
 
 
-// сообщения группового чата
+/**
+ * Модель сообщения группового чата
+ * @type {ModelCtor<Model>}
+ */
 const GroupMessage = sequelize.define('GroupMessage', {
     fromUserId: {
         type: DataTypes.INTEGER,
@@ -204,6 +235,11 @@ const GroupMessage = sequelize.define('GroupMessage', {
 module.exports.GroupMessage = GroupMessage
 
 
+
+/**
+ * Модель избранных ивентов
+ * @type {ModelCtor<Model>}
+ */
 const Favorites = sequelize.define('Favorites', {
     userId: {
         type: DataTypes.INTEGER,
