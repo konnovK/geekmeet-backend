@@ -1,6 +1,7 @@
 const express = require('express')
 const db = require('../db')
 const auth = require('../authorization')
+const tags = require('./tags')
 
 const profile = express.Router()
 profile.use(express.json())
@@ -23,8 +24,7 @@ profile.get('/', async (req, res) => {
     let result = {
         id: user.id,
         login: user.login,
-        // TODO: add tags
-        // было лень делать тэги
+        tags: tags.getUserTags(user.id),
         about: user.about
     }
 
@@ -76,15 +76,48 @@ profile.get('/', async (req, res) => {
 /**
  * Получение списка заявок в друзья
  */
-// profile.get('/', async (req, res) => {
-//
-// })
+profile.get('/', async (req, res) => {
+
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    let frs = await db.FriendRequest.findAll({
+        where: {
+            toUserId: req._id,
+            accepted: false
+        }
+    })
+
+    let newFriends = []
+    frs.forEach((frs) => {
+        newFriends.push(frs.fromUserId)
+    })
+
+    return newFriends
+})
 
 /**
- * Получение списк
+ * Получение списка ваших ивентов: [избранные, подана заявка, заявка одобрена, вы админ]
  */
 // profile.get('/', async (req, res) => {
 //
+//     if (!req._id) {
+//         return res.status(401).json({message: 'authorization error'})
+//     }
+//
+//     let allEvents = await db.Event.findAll()
+//     let favorites = []
+//     let requested = []
+//     let accepted = []
+//     let yours = []
+//
+//     allEvents.forEach((event) => {
+//         // event.id, event.creatorId
+//         if (event.creatorId === req._id) {
+//             yours.push(event)
+//         }
+//     })
 // })
 
 module.exports = profile
