@@ -99,4 +99,30 @@ feed.get('/:id/members', async (req, res) => {
     return res.json(members)
 })
 
+/**
+ * Запрос на создание заявки на ивент
+ */
+feed.post('/:id/join', async (req, res) => {
+    let id = req.params['id']
+
+    let jrs = await db.JoinRequest.findAll({
+        where: {
+            eventId: id,
+            userId: req._id
+        }
+    })
+
+    if (jrs.length > 0) {
+        return res.status(400).json({message: 'join request is already exists'})
+    }
+
+    await db.JoinRequest.create({
+        eventId: id,
+        userId: req._id,
+        accepted: false
+    })
+
+    return res.json({})
+})
+
 module.exports = feed
