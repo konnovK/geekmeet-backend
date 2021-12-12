@@ -14,6 +14,13 @@ admin.get('/', async (req, res) => {
             email: 'qq@qq.ru'
         })
 
+        let user2 = await db.User.create({
+            login: 'boy next door',
+            password: md5('admin'),
+            email: 'qwerty@qwerty.ru'
+        })
+
+
         let tag1 = await db.Tag.create({
             title: 'java script'
         })
@@ -40,7 +47,7 @@ admin.get('/', async (req, res) => {
             name: 'para sherbakova',
             date: new Date(),
             addressId: address1.id,
-            creatorId: user1.id,
+            creatorId: user2.id,
             about: 'qwerty1231',
             seats: 0
         })
@@ -58,6 +65,30 @@ admin.get('/', async (req, res) => {
         await db.EventTagRel.create({
             eventId: event2.id,
             tagId: tag2.id
+        })
+
+        await db.JoinRequest.create({
+            userId: user1.id,
+            eventId: event2.id,
+            accepted: true
+        })
+
+        // await db.JoinRequest.create({
+        //     userId: user2.id,
+        //     eventId: event2.id,
+        //     accepted: true
+        // })
+
+        // await db.JoinRequest.create({
+        //     userId: user1.id,
+        //     eventId: event1.id,
+        //     accepted: true
+        // })
+
+        await db.JoinRequest.create({
+            userId: user2.id,
+            eventId: event1.id,
+            accepted: false
         })
 
         return res.json({})
