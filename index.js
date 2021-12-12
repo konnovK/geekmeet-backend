@@ -1,6 +1,10 @@
 const express = require('express')
 const db = require('./db')
 
+const swaggerUi = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./swagger.yaml')
+
 const server = express()
 
 const DEBUG = true
@@ -10,6 +14,8 @@ server.use(express.json())
 server.use(express.urlencoded())
 server.disable('x-powered-by')
 
+server.use('/api-docs', swaggerUi.serve)
+server.get('/api-docs', swaggerUi.setup(swaggerDocument))
 
 
 const api = require('./router/api')
