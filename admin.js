@@ -8,10 +8,19 @@ admin.get('/', async (req, res) => {
     try {
         await db.truncate()
 
+        let tag1 = await db.Tag.create({
+            title: 'java script'
+        })
+
+        let tag2 = await db.Tag.create({
+            title: 'gachi'
+        })
+
         let user1 = await db.User.create({
             login: 'admin',
             password: md5('admin'),
-            email: 'qq@qq.ru'
+            email: 'qq@qq.ru',
+            about: 'qwerwgrt hbr hnxrkl gjhzl'
         })
 
         let user2 = await db.User.create({
@@ -20,13 +29,19 @@ admin.get('/', async (req, res) => {
             email: 'qwerty@qwerty.ru'
         })
 
-
-        let tag1 = await db.Tag.create({
-            title: 'java script'
+        await db.UserTagRel.create({
+            userId: user2.id,
+            tagId: tag1.id
         })
 
-        let tag2 = await db.Tag.create({
-            title: 'gachi'
+        await db.UserTagRel.create({
+            userId: user2.id,
+            tagId: tag2.id
+        })
+
+        await db.UserTagRel.create({
+            userId: user1.id,
+            tagId: tag2.id
         })
 
         let address1 = await db.Address.create({
