@@ -11,10 +11,9 @@ api.use('/event', feed)
 const profile = require('./profile')
 api.use('/profile', profile)
 
+const chats = require('./chats')
+api.use('/chats', chats)
 
-// api.get('/', (req, res) => {
-//     res.send('/')
-// })
 
 
 module.exports = api
