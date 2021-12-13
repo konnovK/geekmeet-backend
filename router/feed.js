@@ -96,6 +96,24 @@ feed.get('/:id', async (req, res) => {
         return res.status(400).json({message: 'bad address'})
     }
 
+    let favorites = await db.Favorites.findAll({
+        where: {
+            userId: req._id,
+            eventId: id
+        }
+    })
+    let isFavorite = favorites.length > 0;
+
+    let jrs = await db.JoinRequest.findAll({
+        where: {
+            userId: req._id,
+            eventId: id
+        }
+    })
+    let jr = jrs[0]
+
+    let accepted = jr ? jr.accepted : null
+
     let result = {
         id: id,
         name: event.name,
@@ -108,7 +126,9 @@ feed.get('/:id', async (req, res) => {
             metro: address.metro
         },
         seats: event.seats,
-        tags: tags.getEventTags(id)
+        tags: await tags.getEventTags(id),
+        isFavorite: isFavorite,
+        accepted: accepted
     }
 
     return res.json(result)
@@ -141,6 +161,11 @@ feed.patch('/:id', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
+    }
+
+    let events = await db.Event.findByPk(eventId)
+    if (!events) {
+        return res.status(400).json({message: 'wrong event id'})
     }
 
     let favorites = await db.Favorites.findAll({

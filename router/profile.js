@@ -26,7 +26,7 @@ profile.get('/', async (req, res) => {
     let result = {
         id: user.id,
         login: user.login,
-        tags: tags.getUserTags(user.id),
+        tags: await tags.getUserTags(user.id),
         about: user.about
     }
 
@@ -34,9 +34,9 @@ profile.get('/', async (req, res) => {
 })
 
 /**
- * Получение списка друзей
+ * Получение списка друзей и количества новых заявок в друзья
  */
-profile.get('/', async (req, res) => {
+profile.get('/friends', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
@@ -72,13 +72,23 @@ profile.get('/', async (req, res) => {
         }
     })
 
-    return res.json(friends)
+    let newCount = await db.FriendRequest.count({
+        where: {
+            toUserId: req._id,
+            accepted: false
+        }
+    })
+
+    return res.json({
+        friends: friends,
+        newCount: newCount
+    })
 })
 
 /**
  * Получение списка заявок в друзья
  */
-profile.get('/', async (req, res) => {
+profile.get('/friends/new', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
@@ -92,14 +102,14 @@ profile.get('/', async (req, res) => {
     })
 
     let newFriends = []
-    frs.forEach((frs) => {
+    for (const fr of frs) {
         newFriends.push({
-            id: frs.id,
-            login: frs.login,
-            about: frs.about,
-            tags: tags.getUserTags(frs.id)
+            id: fr.id,
+            login: fr.login,
+            about: fr.about,
+            tags: await tags.getUserTags(fr.id)
         })
-    })
+    }
 
     return res.json(newFriends)
 })
@@ -107,14 +117,14 @@ profile.get('/', async (req, res) => {
 /**
  * Получение списка ваших ивентов: [избранные, подана заявка, заявка одобрена, вы админ]
  */
-profile.get('/', async (req, res) => {
+profile.get('/events', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
     }
 
     let allEvents = await db.Event.findAll({
-        attributes: ['id', 'name', 'date', 'addressId', 'seats'],
+        attributes: ['id', 'name', 'date', 'addressId', 'creatorId', 'seats'],
         where: {
             date: {
                 [Op.gte]: moment().toDate()
@@ -167,10 +177,16 @@ profile.get('/', async (req, res) => {
         }
 
         // Проверяем, если пользователь - создатель ивента
-        // Если да, добавляем в компоненту соответствующее значение
+        // Если да, добавляем в компоненту число новых заявок на ивент
         // Если нет, проверяем, на избранное и подачу заявки
         if (event.creatorId === req._id) {
             eventComponent.isAdmin = true
+            eventComponent.newRequests = await db.JoinRequest.count({
+                where: {
+                    eventId: event.id,
+                    accepted: false
+                }
+            })
             yourEvents.push(eventComponent)
         } else {
             let isFavorite = favorites.filter((favorite) => favorite.eventId === event.id).length > 0;
@@ -184,10 +200,12 @@ profile.get('/', async (req, res) => {
             if (isFavorite) {
                 favEvents.push(eventComponent)
             }
-            if (!accepted) {
-                requestedEvents.push(eventComponent)
-            } else {
-                acceptedEvents.push(eventComponent)
+            if (accepted !== null) {
+                if (!accepted) {
+                    requestedEvents.push(eventComponent)
+                } else {
+                    acceptedEvents.push(eventComponent)
+                }
             }
         }
     }
@@ -200,5 +218,17 @@ profile.get('/', async (req, res) => {
         yourEvents: yourEvents
     })
 })
+
+/**
+ * Принять/отклонить заявку в друзья
+ */
+// profile.patch('/friends/new', async (req, res) => {
+//
+//     if (!req._id) {
+//         return res.status(401).json({message: 'authorization error'})
+//     }
+//
+//
+// })
 
 module.exports = profile

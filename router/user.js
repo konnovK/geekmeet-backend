@@ -156,22 +156,6 @@ user.get('/:id', [auth], async (req, res) => {
         return res.status(401).json({message: 'authorization error'})
     }
 
-    // let frs1 = await db.FriendRequest.findAll({
-    //     where: {
-    //         fromUserId: req._id,
-    //         toUserId: id,
-    //         accepted: true
-    //     }
-    // })
-    //
-    // let frs2 = await db.FriendRequest.findAll({
-    //     where: {
-    //         fromUserId: id,
-    //         toUserId: req._id,
-    //         accepted: true
-    //     }
-    // })
-
     let frs = await db.FriendRequest.findAll({
         where: {
             [Op.or]: [{
@@ -186,9 +170,7 @@ user.get('/:id', [auth], async (req, res) => {
         }
     })
 
-    // let isFriend = frs1.length > 0 || frs2.length > 0
     let isFriend = frs.length > 0
-
 
     let user = await db.User.findAll({
         attributes: ['id', 'login', 'email', 'about'],
@@ -197,31 +179,17 @@ user.get('/:id', [auth], async (req, res) => {
         }
     })
 
-
-
     if (user.length === 0) {
         res.status(400).json({message: 'user not exists'})
     } else {
         let _user = user[0]
-
-        // let tagNames = []
-
-        // let tags = await db.Tag.findAll({})
-        // let etrs = await db.UserTagRel.findAll({
-        //     where: {
-        //         userId: _user.id
-        //     }
-        // })
-        // etrs.forEach((etr) =>
-        //     tagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
-        // )
 
         let result = {
             isFriend: isFriend,
             id: _user.id,
             login: _user.login,
             about: _user.about,
-            tags: tags.getUserTags(_user.id) // tagNames
+            tags: await tags.getUserTags(_user.id) // tagNames
         }
 
         res.json(result)

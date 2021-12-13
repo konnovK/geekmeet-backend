@@ -45,4 +45,5 @@ async function getEventTags (eventId) {
     return tagNames
 }
 
-module.exports = {getUserTags, getEventTags}
+module.exports.getUserTags = getUserTags
+module.exports.getEventTags = getEventTags
