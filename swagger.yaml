@@ -106,6 +106,41 @@ paths:
           description: ""
         "400":
           description: ""
+  /event/create:
+    post:
+      summary: "Создание ивента сука"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      tags:
+        - "event"
+      parameters:
+        - name: "Authorization"
+          in: "header"
+          required: true
+          type: "string"
+        - name: "name"
+          in: "formData"
+          required: true
+          type: "string"
+        - name: "about"
+          in: "formData"
+          required: true
+          type: "string"
+        - name: "seats"
+          in: "formData"
+          required: true
+          type: "string"
+        - name: "address"
+          in: "formData"
+          required: true
+          type: "object"
+      responses:
+        "200":
+          description: "create event"
+        "401":
+          description: ""
+        "400":
+          description: ""
   /event/{id}:
     get:
       summary: "Получение инфы об ивенте по его id"
@@ -129,6 +164,7 @@ paths:
           description: ""
         "400":
           description: ""
+  /event/{id}/favorites:
     post:
       summary: "Добавление / удаление из избранного"
       consumes:
