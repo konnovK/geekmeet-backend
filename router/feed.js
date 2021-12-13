@@ -1,6 +1,9 @@
 const express = require('express')
 const db = require('../db')
+const { Op } = require('sequelize')
 const auth = require('../authorization')
+const moment = require('moment')
+const tags = require('./tags')
 
 const feed = express.Router()
 feed.use(express.json())
@@ -16,7 +19,12 @@ feed.get('/',  async (req, res) => {
     }
 
     let events = await db.Event.findAll({
-        attributes: ['id', 'name', 'date', 'addressId', 'seats']
+        attributes: ['id', 'name', 'date', 'addressId', 'seats'],
+        where: {
+            date: {
+                [Op.gte]: moment().toDate()
+            }
+        }
     })
 
     let addresses = await db.Address.findAll({})
@@ -82,23 +90,29 @@ feed.get('/:id', async (req, res) => {
         return res.status(400).json({message: 'event not exists'})
     }
 
-    let eventTagRels = await db.EventTagRel.findAll({
-        where: {
-            eventId: id
-        }
-    })
-    let tags = await db.Tag.findAll({})
-
-    let eventTagNames = []
-    eventTagRels.forEach((etr) => {
-        eventTagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
-    })
-
     let address = await db.Address.findByPk(event.addressId)
 
     if (address === null) {
         return res.status(400).json({message: 'bad address'})
     }
+
+    let favorites = await db.Favorites.findAll({
+        where: {
+            userId: req._id,
+            eventId: id
+        }
+    })
+    let isFavorite = favorites.length > 0;
+
+    let jrs = await db.JoinRequest.findAll({
+        where: {
+            userId: req._id,
+            eventId: id
+        }
+    })
+    let jr = jrs[0]
+
+    let accepted = jr ? jr.accepted : null
 
     let result = {
         id: id,
@@ -112,7 +126,9 @@ feed.get('/:id', async (req, res) => {
             metro: address.metro
         },
         seats: event.seats,
-        tags: eventTagNames
+        tags: await tags.getEventTags(id),
+        isFavorite: isFavorite,
+        accepted: accepted
     }
 
     return res.json(result)
@@ -145,6 +161,11 @@ feed.patch('/:id', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
+    }
+
+    let events = await db.Event.findByPk(eventId)
+    if (!events) {
+        return res.status(400).json({message: 'wrong event id'})
     }
 
     let favorites = await db.Favorites.findAll({

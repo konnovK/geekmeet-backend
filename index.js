@@ -7,7 +7,7 @@ const swaggerDocument = YAML.load('./swagger.yaml')
 
 const server = express()
 
-const DEBUG = false
+const DEBUG = true
 
 
 server.use(express.json())

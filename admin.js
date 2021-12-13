@@ -1,6 +1,7 @@
 const express = require('express')
 const db = require('./db')
 const md5 = require('md5')
+const moment = require('moment')
 
 
 const admin = express.Router()
@@ -51,7 +52,7 @@ admin.get('/', async (req, res) => {
 
         let event1 = await db.Event.create({
             name: 'zashaiba',
-            date: new Date(),
+            date: moment().add(30, 'days').toDate(),
             addressId: address1.id,
             creatorId: user1.id,
             about: 'qwerty',
@@ -60,7 +61,7 @@ admin.get('/', async (req, res) => {
 
         let event2 = await db.Event.create({
             name: 'para sherbakova',
-            date: new Date(),
+            date: moment().add(2, 'hours').toDate(),
             addressId: address1.id,
             creatorId: user2.id,
             about: 'qwerty1231',
@@ -107,9 +108,16 @@ admin.get('/', async (req, res) => {
         })
 
         await db.Favorites.create({
-            userId: user2.id,
-            eventId: event1.id
+            userId: user1.id,
+            eventId: event2.id
         })
+
+        await db.FriendRequest.create({
+            fromUserId: user1.id,
+            toUserId: user2.id,
+            accepted: true
+        })
+
 
         return res.json({})
     } catch (e) {
