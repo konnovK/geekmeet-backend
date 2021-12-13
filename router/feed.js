@@ -155,7 +155,7 @@ feed.get('/:id/members', async (req, res) => {
 /**
  * Добавление в избранное или удаление из избранного
  */
-feed.patch('/:id', async (req, res) => {
+feed.patch('/:id/favorites', async (req, res) => {
     let eventId = req.params['id']
     let userId = req._id
 
@@ -190,6 +190,73 @@ feed.patch('/:id', async (req, res) => {
         })
         return res.json({message: 'removed from favorites'})
     }
+})
+
+/**
+ * Запрос на создание ивента
+ *
+ *  {
+ *     "name" : "string",
+ *     "about" : "string",
+ *     "seats" : "int",
+ *     "address" : {
+ *          "name" : "string",
+ *          "address" : "string",
+ *          "metro" : "string"
+ *      }
+ *  }
+ */
+feed.post('/create', async (req, res) => {
+
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    let name = req.body.name
+    let address = req.body.address
+    let about = req.body.about
+    let seats = req.body.seats
+
+    if (!name) {
+        res.status(400).json({message: 'name is empty'})
+    }
+    if (!about) {
+        res.status(400).json({message: 'about is empty'})
+    }
+    if (!seats) {
+        res.status(400).json({message: 'seats is empty'})
+    }
+    if (!address) {
+        res.status(400).json({message: 'address is empty'})
+    } else {
+        if (!address.name) {
+            res.status(400).json({message: 'address.name is empty'})
+        }
+        if (!address.address) {
+            res.status(400).json({message: 'address.address is empty'})
+        }
+        if (!address.metro) {
+            res.status(400).json({message: 'address.metro is empty'})
+        }
+    }
+
+
+    let address1 = await db.Address.create({
+        name: address.name,
+        address: address.address,
+        metro: address.metro ? address.metro : null
+    })
+
+    let event1 = await db.Event.create({
+        name: name,
+        date: moment().toDate(),
+        addressId: address1.id,
+        creatorId: req._id,
+        about: about,
+        seats: seats
+    })
+
+    res.json({message: `event ${event1.id} has been created`})
 })
 
 /**
