@@ -7,7 +7,7 @@ const swaggerDocument = YAML.load('./swagger.yaml')
 
 const server = express()
 
-const DEBUG = false
+const DEBUG = true
 
 
 server.use(express.json())
@@ -19,9 +19,11 @@ server.get('/api-docs', swaggerUi.setup(swaggerDocument))
 
 
 const api = require('./router/api')
+const api2 = require('./router2/api')
 
 
-server.use('/api/v1', api);
+server.use('/api/v1', api)
+server.use('/api/v2', api2)
 
 
 if (DEBUG) {
