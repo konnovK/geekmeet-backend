@@ -8,26 +8,6 @@ const sequelize = new Sequelize({
 
 
 /**
- * Модель адреса
- */
-const Address = sequelize.define('Address',{
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    address: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    metro: {
-        type: DataTypes.STRING
-    }
-})
-module.exports.Address = Address
-
-
-
-/**
  * Модель пользователя
  */
 const User = sequelize.define('User', {
@@ -49,8 +29,97 @@ const User = sequelize.define('User', {
     avatar: {
         type: DataTypes.STRING
     }
+}, {
+    timestamps: false
 })
 module.exports.User = User
+
+
+
+/**
+ * Модель тэга
+ */
+const Tag = sequelize.define('Tag', {
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    timestamps: false
+})
+module.exports.Tag = Tag
+
+
+
+/**
+ * Модель связи пользователя и тэга
+ */
+const UserTagRel = sequelize.define('UserTagRel', {
+    userId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: "id"
+        }
+    },
+    tagId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Tag,
+            key: "id"
+        }
+    }
+}, {
+    timestamps: false
+})
+module.exports.UserTagRel = UserTagRel
+
+
+
+/**
+ * Модель запроса в друзья
+ */
+const FriendRequest = sequelize.define('FriendRequest', {
+    fromUserId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: "id"
+        }
+    },
+    toUserId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: "id"
+        }
+    },
+    status: {
+        type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
+        allowNull: false
+    }
+})
+module.exports.FriendRequest = FriendRequest
+
+
+
+/**
+ * Модель адреса
+ */
+const Address = sequelize.define('Address',{
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    metro: {
+        type: DataTypes.STRING
+    }
+})
+module.exports.Address = Address
 
 
 
@@ -85,56 +154,6 @@ const Event = sequelize.define('Event', {
     }
 })
 module.exports.Event = Event
-
-
-/**
- * Модель тэга
- */
-const Tag = sequelize.define('Tag', {
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-})
-module.exports.Tag = Tag
-
-
-
-/**
- * Модель связи пользователя и тэга
- */
-const UserTagRel = sequelize.define('UserTagRel', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    tagId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    }
-})
-module.exports.UserTagRel = UserTagRel
-
-
-
-/**
- * Модель запроса в друзья
- */
-const FriendRequest = sequelize.define('FriendRequest', {
-    fromUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    toUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    accepted: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    }
-})
-module.exports.FriendRequest = FriendRequest
 
 
 
