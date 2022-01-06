@@ -1,421 +1,159 @@
-swagger: "2.0"
-info:
-  description: "geekmeet backend."
-  version: "1.0.0"
-  title: "geekmeet-backend"
+openapi: 3.0.0
 
-host: "geekmeet-backend.host1818494.hostland.pro"
-basePath: "/api/v1"
+
+info:
+  title: GeekMeet backend
+  description: ""
+  version: 0.0.1
+
+
+servers:
+  - url: /api/v2
+
 tags:
   - name: "user"
     description: ""
-  - name: "event"
-    description: ""
-  - name: "profile"
-    description: ""
-  - name: "chats"
-    description: ""
+
 
 paths:
-  /user/login:
-    post:
-      summary: "Авторизация"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "user"
-      parameters:
-        - name: "login"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "password"
-          in: "formData"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "successful operation"
-        "400":
-          description: "login is empty, password is empty, user not exists, wrong password"
   /user/register:
     post:
-      summary: "Регистрация"
-      consumes:
-        - "application/x-www-form-urlencoded"
+      summary: Создание пользователя и авторизация
       tags:
         - "user"
-      parameters:
-        - name: "login"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "password"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "formData"
-          in: "formData"
-          required: false
-          type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                about:
+                  type: string
+                avatar:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: integer
+              required:
+                - login
+                - password
+                - email
+                - tags
+                - avatar
       responses:
-        "200":
-          description: "successful operation"
-        "400":
-          description: "login is empty, password is empty, user not exists, wrong password"
+        '200':    # status code
+          description: Токен авторизации, если регистрация прошла успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /user/login:
+    post:
+      summary: Авторизация
+      tags:
+        - "user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+              required:
+                - login
+                - password
+      responses:
+        '200':    # status code
+          description: Токен авторизации
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
   /user/{id}:
     get:
-      summary: "Получение инфы о пользователе по id"
-      consumes:
-        - "application/x-www-form-urlencoded"
+      summary: Получение пользователя по id
       tags:
         - "user"
       parameters:
-        - name: "id"
-          in: "path"
+        - name: id
+          in: path
           required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
           required: true
-          type: "string"
+          schema:
+            type: string
       responses:
-        "200":
-          description: "user info"
-        "401":
-          description: ""
-        "400":
-          description: ""
-
-  /event:
-    get:
-      summary: "Получение инфы о всех ивентах"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "event"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "events info"
-        "401":
-          description: ""
-        "400":
-          description: ""
-  /event/create:
-    post:
-      summary: "Создание ивента сука"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "event"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-        - name: "name"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "about"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "seats"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "address"
-          in: "formData"
-          required: true
-          type: "object"
-      responses:
-        "200":
-          description: "create event"
-        "401":
-          description: ""
-        "400":
-          description: ""
-  /event/{id}:
-    get:
-      summary: "Получение инфы об ивенте по его id"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "event"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "event info"
-        "401":
-          description: ""
-        "400":
-          description: ""
-  /event/{id}/favorites:
-    post:
-      summary: "Добавление / удаление из избранного"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "event"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "successful operation"
-        "401":
-          description: ""
-        "400":
-          description: ""
-  /event/{id}/members:
-    get:
-      summary: "Получение участников ивента по его id"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "event"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "event members info"
-        "401":
-          description: ""
-        "400":
-          description: ""
-  /event/{id}/join:
-    post:
-      summary: "Отправить заявку на ивент"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "event"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "successful operation"
-        "401":
-          description: ""
-        "400":
-          description: ""
-
-  /profile:
-    get:
-      summary: "Информация о пользователе"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "profile"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "about you"
-        "401":
-          description: ""
-  /profile/friends:
-    get:
-      summary: "Информация о ваших друзьях"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "profile"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "about your friends"
-        "401":
-          description: ""
-  /profile/friends/new:
-    get:
-      summary: "Информация о ваших заявках в друзья"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "profile"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "about your friend requests"
-        "401":
-          description: ""
-  /profile/events:
-    get:
-      summary: "Информация о ваших ивентах"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "profile"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "about your events"
-        "401":
-          description: ""
-
-  /chats:
-    get:
-      summary: "Ваши личные и групповые чаты"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "chats"
-      parameters:
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "your chats"
-        "401":
-          description: ""
-  /chats/private/{id}:
-    get:
-      summary: "Информация о личном чате по id пользователя"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      deprecated: true
-      tags:
-        - "chats"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "private chat messages"
-        "401":
-          description: ""
-  /chats/group/{id}:
-    get:
-      summary: "Информация о групповом чате по id ивента"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "chats"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: "integer"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "group chat messages"
-        "401":
-          description: ""
-  /chats/private:
-    post:
-      summary: "Отправка сообщения пользователю"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "chats"
-      parameters:
-        - name: "id"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "text"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "send message"
-        "401":
-          description: ""
-  /chats/group:
-    post:
-      summary: "Отправка сообщения в групповой чат"
-      consumes:
-        - "application/x-www-form-urlencoded"
-      tags:
-        - "chats"
-      parameters:
-        - name: "id"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "text"
-          in: "formData"
-          required: true
-          type: "string"
-        - name: "Authorization"
-          in: "header"
-          required: true
-          type: "string"
-      responses:
-        "200":
-          description: "send message"
-        "401":
-          description: ""
-
-definitions:
-  {}
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+        '200':    # status code
+          description: Данные пользователя по его id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  login:
+                    type: string
+                  about:
+                    type: string
+                  avatar:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                  request:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        target:
+                          type: integer
