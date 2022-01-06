@@ -85,9 +85,12 @@ user.post('/register', async (req, res) => {
  * Получение пользователя по id
  */
 user.get('/:id', [auth], async (req, res) => {
+    let _id = req._id
+
     let id = req.params['id']
 
     let user =  await db.User.findByPk(id)
+
 
     let utrs = (await db.UserTagRel.findAll({
         attributes: ['tagId'],
@@ -95,7 +98,6 @@ user.get('/:id', [auth], async (req, res) => {
             userId: id
         }
     })).map(utr => utr.tagId)
-
     let tags = await db.Tag.findAll({
         where: {
             id: {
@@ -104,12 +106,41 @@ user.get('/:id', [auth], async (req, res) => {
         }
     })
 
+
+    let friendRequest = await db.FriendRequest.findAll({
+        attributes: ['toUserId' , 'status'],
+        where: {
+            [Op.or]: [
+                {
+                    fromUserId: _id
+                },
+                {
+                    toUserId: _id
+                }
+            ]
+        }
+    })
+
+    let request
+    if (friendRequest.length === 0) {
+        request = {
+            status: 'none'
+        }
+    } else {
+        request = {
+            status: friendRequest[0].status,
+            target: friendRequest[0].toUserId
+        }
+    }
+
+
     res.json({
         id,
         login: user.login,
         about: user.about,
         avatar: user.avatar,
-        tags
+        tags,
+        request
     })
 })
 
