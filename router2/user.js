@@ -3,6 +3,7 @@ const db = require('../db')
 const md5 = require('md5')
 const jwt = require('jsonwebtoken')
 const { Op } = require('sequelize')
+const auth = require('../authorization')
 
 
 const user = express.Router()
@@ -12,6 +13,7 @@ let createToken = (user) => {
     let payload = { id: user.id }
     return jwt.sign(payload, "SECRET_KEY_RANDOM", {expiresIn: "7d"})
 }
+
 
 /**
  * Авторизация
@@ -77,5 +79,39 @@ user.post('/register', async (req, res) => {
     let token = createToken(user)
     res.json({token: token})
 })
+
+
+/**
+ * Получение пользователя по id
+ */
+user.get('/:id', [auth], async (req, res) => {
+    let id = req.params['id']
+
+    let user =  await db.User.findByPk(id)
+
+    let utrs = (await db.UserTagRel.findAll({
+        attributes: ['tagId'],
+        where: {
+            userId: id
+        }
+    })).map(utr => utr.tagId)
+
+    let tags = await db.Tag.findAll({
+        where: {
+            id: {
+                [Op.in]: utrs
+            }
+        }
+    })
+
+    res.json({
+        id,
+        login: user.login,
+        about: user.about,
+        avatar: user.avatar,
+        tags
+    })
+})
+
 
 module.exports = user
