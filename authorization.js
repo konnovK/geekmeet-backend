@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { DEBUG } = require('./settings.json')
 
 let verifyToken = (token) => {
     return jwt.verify(token, "SECRET_KEY_RANDOM")
@@ -6,6 +7,9 @@ let verifyToken = (token) => {
 
 
 let authorization = (req, res, next) => {
+    if (DEBUG) {
+        return next()
+    }
     try {
         let token = req.headers.authorization.split(' ')[1]
 

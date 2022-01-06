@@ -1,13 +1,12 @@
 const express = require('express')
 const db = require('./db')
+const { DEBUG } = require('./settings.json')
 
 const swaggerUi = require('swagger-ui-express')
 const YAML = require('yamljs')
 const swaggerDocument = YAML.load('./swagger.yaml')
 
 const server = express()
-
-const DEBUG = true
 
 
 server.use(express.json())
@@ -40,6 +39,20 @@ server.listen(80, async () => {
     if (DEBUG) {
         await db.drop()
     }
+
     await db.init()
+
+    if (DEBUG) {
+        await db.Tag.create({
+            title: "tag1"
+        })
+        await db.Tag.create({
+            title: "tag2"
+        })
+        await db.Tag.create({
+            title: "tag3"
+        })
+    }
+
     console.log(`http://localhost:${80}`)
 })
