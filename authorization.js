@@ -7,9 +7,12 @@ let verifyToken = (token) => {
 
 
 let authorization = (req, res, next) => {
-    if (DEBUG) {
-        return next()
+    if (!req.headers.authorization) {
+        if (DEBUG) {
+            return next()
+        }
     }
+
     try {
         let token = req.headers.authorization.split(' ')[1]
 

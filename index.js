@@ -34,6 +34,16 @@ server.get('/', (req, res) => {
     res.send('it works!')
 })
 
+if (DEBUG) {
+    server.get('/test', async (req, res) => {
+        await db.FriendRequest.create({
+            fromUserId: 1,
+            toUserId: 2,
+            status: 'sent'
+        })
+        res.send('qq')
+    })
+}
 
 server.listen(80, async () => {
     if (DEBUG) {
