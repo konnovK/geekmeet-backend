@@ -145,4 +145,29 @@ user.get('/:id', [auth], async (req, res) => {
 })
 
 
+user.patch('/', [auth], async (req, res) => {
+    let _id = req._id;
+
+    let body = req.body;
+
+    let non_empty = {}
+
+    for (const [key, value] of Object.entries(body)) {
+        if (value) {
+            if (key === 'password') {
+                non_empty[key] = md5(value)
+            } else {
+                non_empty[key] = value
+            }
+        }
+    }
+
+    await db.User.update(non_empty, {
+        where: { id: _id }
+    })
+
+    res.json()
+})
+
+
 module.exports = user

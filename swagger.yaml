@@ -159,6 +159,45 @@ paths:
                         target:
                           type: integer
 
+  /user/:
+    patch:
+      summary: Изменение информации пользователя о себе
+      tags:
+        - "user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                about:
+                  type: string
+                avatar:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':    # status code
+          description: Изменение прошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
   /tag/:
     get:
       summary: Получение всех тэгов
