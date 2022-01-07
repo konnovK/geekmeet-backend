@@ -1,6 +1,5 @@
 const express = require('express')
 const db = require('../db')
-const { Op } = require('sequelize')
 const auth = require('../authorization')
 
 
@@ -31,7 +30,7 @@ tag.post('/', [auth], async (req, res) => {
 
     await db.Tag.create({title})
 
-    res.json({})
+    res.json()
 })
 
 
