@@ -160,7 +160,18 @@ user.patch('/', [auth], async (req, res) => {
             if (key === 'password') {
                 non_empty[key] = md5(value)
             } else {
-                non_empty[key] = value
+                if (key === 'tags') {
+                    for (let tag of body[key]) {
+                        if ((await db.UserTagRel.findAll({where: {userId: _id, tagId: tag}})).length === 0) {
+                            await db.UserTagRel.create({
+                                userId: _id,
+                                tagId: tag
+                            })
+                        }
+                    }
+                } else {
+                    non_empty[key] = value
+                }
             }
         }
     }
