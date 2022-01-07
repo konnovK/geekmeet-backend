@@ -69,7 +69,7 @@ user.post('/register', async (req, res) => {
     })
     // Создаем Связи этого юзера с тегами
     for (const tag_id of tags) {
-        let utr = await db.UserTagRel.create({
+        await db.UserTagRel.create({
             userId: user.id,
             tagId: tag_id
         })
@@ -145,6 +145,9 @@ user.get('/:id', [auth], async (req, res) => {
 })
 
 
+/**
+ * Изменение информации пользователя о себе
+ */
 user.patch('/', [auth], async (req, res) => {
     let _id = req._id;
 
