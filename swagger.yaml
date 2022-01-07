@@ -13,6 +13,7 @@ servers:
 tags:
   - name: "user"
     description: ""
+  - name: tag
 
 
 paths:
@@ -157,3 +158,56 @@ paths:
                           type: string
                         target:
                           type: integer
+
+  /tag/:
+    get:
+      summary: Получение всех тэгов
+      tags:
+        - tag
+      responses:
+        '200':    # status code
+          description: Список всех тэгов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+    post:
+      summary: Создание нового тэга
+      tags:
+        - tag
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+              required:
+                - title
+      responses:
+        '200':    # status code
+          description: Тэг создан
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
