@@ -27,7 +27,7 @@ const User = sequelize.define('User', {
         type: DataTypes.TEXT,
     },
     avatar: {
-        type: DataTypes.STRING
+        type: DataTypes.TEXT
     }
 }, {
     timestamps: false
@@ -147,7 +147,7 @@ const Event = sequelize.define('Event', {
         type: DataTypes.TEXT,
     },
     photo: {
-        type: DataTypes.STRING
+        type: DataTypes.TEXT
     },
     seats: {
         type: DataTypes.INTEGER
