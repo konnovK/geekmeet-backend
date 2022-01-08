@@ -9,6 +9,7 @@ const auth = require('../authorization')
 const user = express.Router()
 user.use(express.json())
 
+
 let createToken = (user) => {
     let payload = { id: user.id }
     return jwt.sign(payload, "SECRET_KEY_RANDOM", {expiresIn: "7d"})
@@ -30,7 +31,7 @@ user.post('/login', async (req, res) => {
         }
     })
     if (user.length === 0) {
-        return res.status(400).json({message: 'user not exists'})
+        return res.status(400).json({message: 'user does not exist'})
     }
     if (user[0].password !== passwordHash) {
         return res.status(400).json({message: 'wrong password'})
@@ -52,10 +53,10 @@ user.post('/register', async (req, res) => {
 
     // Валидация
     if ((await db.User.findAll({ where: { login: login } })).length > 0) {
-        return res.status(400).json({message: 'user with this login существует'})
+        return res.status(400).json({message: 'user with this login already exists'})
     }
     if ((await db.User.findAll({ where: { email: email } })).length > 0) {
-        return res.status(400).json({message: 'user with this email существует'})
+        return res.status(400).json({message: 'user with this email already exists'})
     }
 
 
@@ -89,7 +90,7 @@ user.get('/:id', [auth], async (req, res) => {
 
     let id = req.params['id']
 
-    let user =  await db.User.findByPk(id)
+    let user = await db.User.findByPk(id)
 
 
     let utrs = (await db.UserTagRel.findAll({
@@ -160,6 +161,7 @@ user.patch('/', [auth], async (req, res) => {
             if (key === 'password') {
                 non_empty[key] = md5(value)
             } else {
+                // TODO: удалять старые теги
                 if (key === 'tags') {
                     for (let tag of body[key]) {
                         if ((await db.UserTagRel.findAll({where: {userId: _id, tagId: tag}})).length === 0) {
@@ -174,6 +176,15 @@ user.patch('/', [auth], async (req, res) => {
                 }
             }
         }
+    }
+
+
+    // Валидация
+    if (non_empty["login"] && (await db.User.findAll({ where: { login: non_empty["login"] } })).length > 0) {
+        return res.status(400).json({message: 'user with this login already exists'})
+    }
+    if (non_empty["email"] && (await db.User.findAll({ where: { email: non_empty["email"] } })).length > 0) {
+        return res.status(400).json({message: 'user with this email already exists'})
     }
 
     await db.User.update(non_empty, {
