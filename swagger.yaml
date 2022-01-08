@@ -12,8 +12,16 @@ servers:
 
 tags:
   - name: "user"
-    description: ""
+    description: "Действия с пользователем"
+    
+  - name: feed
+    description: "Действия с лентой"
+    
+  - name: event
+    description: "Действия с ивентами"
+    
   - name: tag
+    description: "Действия с тэгами"
 
 
 paths:
@@ -196,6 +204,80 @@ paths:
                   message:
                     type: string
 
+
+
+  /feed/:
+    get:
+      summary: Получение ленты ивентов
+      tags:
+        - feed
+      responses:
+        '200':    # status code
+          description: Список всех предстоящих ивентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    date:
+                      type: string
+                    address:
+                      type: string
+                    photo:
+                      type: string
+                    seats:
+                      type: integer
+                    tags:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          title:
+                            type: string
+                    isFavorite:
+                      type: boolean
+                    request:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+
+  /feed/new:
+    get:
+      summary: Получение новых ивентов (свайпер)
+      tags:
+        - feed
+      responses:
+        '200':    # status code
+          description: Список всех новых ивентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    date:
+                      type: string
+                    address:
+                      type: string
+                    photo:
+                      type: string
+
+
+
   /tag/:
     get:
       summary: Получение всех тэгов
@@ -248,3 +330,4 @@ paths:
                 properties:
                   message:
                     type: string
+  
