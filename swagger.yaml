@@ -150,14 +150,12 @@ paths:
                         title:
                           type: string
                   request:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        status:
-                          type: string
-                        target:
-                          type: integer
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      target:
+                        type: integer
 
   /user/:
     patch:

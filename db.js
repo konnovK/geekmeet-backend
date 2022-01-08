@@ -169,8 +169,8 @@ const JoinRequest = sequelize.define('JoinRequest', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    accepted: {
-        type: DataTypes.BOOLEAN,
+    status: {
+        type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
         allowNull: false
     }
 })
