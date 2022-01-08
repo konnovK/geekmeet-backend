@@ -57,6 +57,7 @@ module.exports.Tag = Tag
 const UserTagRel = sequelize.define('UserTagRel', {
     userId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
             model: User,
             key: "id"
@@ -64,6 +65,7 @@ const UserTagRel = sequelize.define('UserTagRel', {
     },
     tagId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
             model: Tag,
             key: "id"
@@ -82,6 +84,7 @@ module.exports.UserTagRel = UserTagRel
 const FriendRequest = sequelize.define('FriendRequest', {
     fromUserId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
             model: User,
             key: "id"
@@ -89,6 +92,7 @@ const FriendRequest = sequelize.define('FriendRequest', {
     },
     toUserId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
             model: User,
             key: "id"
@@ -137,11 +141,19 @@ const Event = sequelize.define('Event', {
     },
     addressId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: Address,
+            key: "id"
+        }
     },
     creatorId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     about: {
         type: DataTypes.TEXT,
@@ -152,6 +164,8 @@ const Event = sequelize.define('Event', {
     seats: {
         type: DataTypes.INTEGER
     }
+}, {
+    timestamps: false
 })
 module.exports.Event = Event
 
@@ -163,11 +177,19 @@ module.exports.Event = Event
 const JoinRequest = sequelize.define('JoinRequest', {
     userId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     eventId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: Event,
+            key: "id"
+        }
     },
     status: {
         type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
@@ -184,12 +206,22 @@ module.exports.JoinRequest = JoinRequest
 const EventTagRel = sequelize.define('EventTagRel', {
     eventId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: Event,
+            key: "id"
+        }
     },
     tagId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: Tag,
+            key: "id"
+        }
     }
+}, {
+    timestamps: false
 })
 module.exports.EventTagRel = EventTagRel
 
@@ -201,11 +233,19 @@ module.exports.EventTagRel = EventTagRel
 const PrivateMessage = sequelize.define('PrivateMessage', {
     fromUserId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     toUserId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     date: {
         type: DataTypes.DATE,
@@ -226,11 +266,19 @@ module.exports.PrivateMessage = PrivateMessage
 const GroupMessage = sequelize.define('GroupMessage', {
     fromUserId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     eventId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: Event,
+            key: "id"
+        }
     },
     date: {
         type: DataTypes.DATE,
@@ -251,14 +299,50 @@ module.exports.GroupMessage = GroupMessage
 const Favorites = sequelize.define('Favorites', {
     userId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     eventId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: Event,
+            key: "id"
+        }
     }
+}, {
+    timestamps: false
 })
 module.exports.Favorites = Favorites
+
+
+/**
+ * Модель просмотренных ивентов
+ */
+const ViewedEvents = sequelize.define('ViewedEvents', {
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
+    },
+    eventId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Event,
+            key: "id"
+        }
+    }
+}, {
+    timestamps: false
+})
+module.exports.ViewedEvents = ViewedEvents
 
 
 
