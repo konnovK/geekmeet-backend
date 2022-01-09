@@ -16,6 +16,9 @@ tag.get('/', async (req, res) => {
 })
 
 
+/**
+ * Создание нового тэга
+ */
 tag.post('/', [auth], async (req, res) => {
     let title = req.body.title
 
