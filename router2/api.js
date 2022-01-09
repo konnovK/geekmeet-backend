@@ -11,4 +11,7 @@ api.use('/tag', tag)
 const feed = require('./feed')
 api.use('/feed', feed)
 
+const event = require('./event')
+api.use('/event', event)
+
 module.exports = api
