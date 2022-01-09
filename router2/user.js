@@ -4,6 +4,7 @@ const md5 = require('md5')
 const jwt = require('jsonwebtoken')
 const { Op } = require('sequelize')
 const auth = require('../authorization')
+const {User, UserTagRel} = require("../db");
 
 
 const user = express.Router()
@@ -68,13 +69,15 @@ user.post('/register', async (req, res) => {
         about,
         avatar
     })
+
     // Создаем Связи этого юзера с тегами
-    for (const tag_id of tags) {
-        await db.UserTagRel.create({
-            userId: user.id,
-            tagId: tag_id
-        })
-    }
+    // for (const tag_id of tags) {
+    //     await db.UserTagRel.create({
+    //         userId: user.id,
+    //         tagId: tag_id
+    //     })
+    // }
+    await user.addTags(tags)
 
 
     let token = createToken(user)
@@ -93,20 +96,30 @@ user.get('/:id', [auth], async (req, res) => {
     let user = await db.User.findByPk(id)
 
 
-    let utrs = (await db.UserTagRel.findAll({
-        attributes: ['tagId'],
-        where: {
-            userId: id
-        }
-    })).map(utr => utr.tagId)
-    let tags = await db.Tag.findAll({
-        where: {
-            id: {
-                [Op.in]: utrs
-            }
-        }
-    })
+    // let utrs = (await db.UserTagRel.findAll({
+    //     attributes: ['TagId'],
+    //     where: {
+    //         UserId: id
+    //     }
+    // })).map(utr => utr.TagId)
+    // let tags = await db.Tag.findAll({
+    //     where: {
+    //         id: {
+    //             [Op.in]: utrs
+    //         }
+    //     }
+    // })
 
+    let tags = await db.Tag.findAll({
+        include: [{
+            model: User,
+            where: {
+                id: id
+            },
+            as: UserTagRel,
+            attributes: []
+        }]
+    })
 
     let friendRequest = await db.FriendRequest.findAll({
         attributes: ['toUserId' , 'status'],
