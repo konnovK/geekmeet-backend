@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
 })
 
 
-
+// ОСНОВНЫЕ МОДЕЛИ
 /**
  * Модель пользователя
  */
@@ -48,68 +48,6 @@ const Tag = sequelize.define('Tag', {
     timestamps: false
 })
 module.exports.Tag = Tag
-
-
-
-// const UserTagRel = sequelize.define('UserTagRel', {
-//     userId: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//         references: {
-//             model: User,
-//             key: "id"
-//         }
-//     },
-//     tagId: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//         references: {
-//             model: Tag,
-//             key: "id"
-//         }
-//     }
-// }, {
-//     timestamps: false
-// })
-// module.exports.UserTagRel = UserTagRel
-/**
- * Модель связи пользователя и тэга
- */
-const UserTagRel = sequelize.define('UserTagRel', {}, {timestamps: false})
-User.belongsToMany(Tag, {through: UserTagRel})
-Tag.belongsToMany(User, {through: UserTagRel})
-module.exports.UserTagRel = UserTagRel
-
-
-
-/**
- * Модель запроса в друзья
- */
-const FriendRequest = sequelize.define('FriendRequest', {
-    fromUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    toUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    status: {
-        type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
-        allowNull: false
-    }
-}, {
-    timestamps: false
-})
-module.exports.FriendRequest = FriendRequest
 
 
 
@@ -181,6 +119,51 @@ module.exports.Event = Event
 
 
 
+
+
+
+// МОДЕЛИ СВЯЗЕЙ
+/**
+ * Модель связи пользователя и тэга
+ */
+const UserTagRel = sequelize.define('UserTagRel', {}, {timestamps: false})
+User.belongsToMany(Tag, {through: UserTagRel})
+Tag.belongsToMany(User, {through: UserTagRel})
+module.exports.UserTagRel = UserTagRel
+
+
+
+/**
+ * Модель запроса в друзья
+ */
+const FriendRequest = sequelize.define('FriendRequest', {
+    fromUserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
+    },
+    toUserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: "id"
+        }
+    },
+    status: {
+        type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
+        allowNull: false
+    }
+}, {
+    timestamps: false
+})
+module.exports.FriendRequest = FriendRequest
+
+
+
 /**
  * Модель заявки на ивент
  */
@@ -201,26 +184,6 @@ module.exports.JoinRequest = JoinRequest
 /**
  * Модель связи ивента и тэга
  */
-// const EventTagRel = sequelize.define('EventTagRel', {
-//     eventId: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//         references: {
-//             model: Event,
-//             key: "id"
-//         }
-//     },
-//     tagId: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//         references: {
-//             model: Tag,
-//             key: "id"
-//         }
-//     }
-// }, {
-//     timestamps: false
-// })
 const EventTagRel = sequelize.define('EventTagRel', {}, {timestamps: false})
 Event.belongsToMany(Tag, {through: EventTagRel})
 Tag.belongsToMany(Event, {through: EventTagRel})
