@@ -54,28 +54,34 @@ module.exports.Tag = Tag
 /**
  * Модель связи пользователя и тэга
  */
-const UserTagRel = sequelize.define('UserTagRel', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    tagId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Tag,
-            key: "id"
-        }
-    }
-}, {
-    timestamps: false
-})
+// const UserTagRel = sequelize.define('UserTagRel', {
+//     userId: {
+//         type: DataTypes.INTEGER,
+//         allowNull: false,
+//         references: {
+//             model: User,
+//             key: "id"
+//         }
+//     },
+//     tagId: {
+//         type: DataTypes.INTEGER,
+//         allowNull: false,
+//         references: {
+//             model: Tag,
+//             key: "id"
+//         }
+//     }
+// }, {
+//     timestamps: false
+// })
+// module.exports.UserTagRel = UserTagRel
+const UserTagRel = sequelize.define('UserTagRel', {}, {timestamps: false})
+User.belongsToMany(Tag, {through: UserTagRel})
+Tag.belongsToMany(User, {through: UserTagRel})
 module.exports.UserTagRel = UserTagRel
 
+// Tag.belongsToMany(User, {through: 'UserTagRel'})
+// User.belongsToMany(Tag, {through: 'UserTagRel'})
 
 
 /**
