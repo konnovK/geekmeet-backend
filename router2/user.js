@@ -208,4 +208,9 @@ user.patch('/', [auth], async (req, res) => {
 })
 
 
+/**
+ * Получение информации о себе
+ */
+
+
 module.exports = user
