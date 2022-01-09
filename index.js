@@ -36,12 +36,12 @@ server.get('/', (req, res) => {
 
 if (DEBUG) {
     server.get('/test', async (req, res) => {
-        await db.FriendRequest.create({
-            fromUserId: 1,
-            toUserId: 2,
-            status: 'sent'
+        await db.JoinRequest.create({
+            status: 'rejected',
+            UserId: 1,
+            EventId: 1
         })
-        res.send('qq')
+        res.send()
     })
 }
 

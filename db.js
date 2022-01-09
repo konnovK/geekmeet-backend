@@ -185,22 +185,6 @@ module.exports.Event = Event
  * Модель заявки на ивент
  */
 const JoinRequest = sequelize.define('JoinRequest', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    eventId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Event,
-            key: "id"
-        }
-    },
     status: {
         type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
         allowNull: false
@@ -208,6 +192,8 @@ const JoinRequest = sequelize.define('JoinRequest', {
 }, {
     timestamps: false
 })
+Event.belongsToMany(User, {through: JoinRequest})
+User.belongsToMany(Event, {through: JoinRequest, as: 'joinRequests'})
 module.exports.JoinRequest = JoinRequest
 
 
@@ -339,7 +325,7 @@ module.exports.Favorites = Favorites
  */
 const ViewedEvents = sequelize.define('ViewedEvents', {}, {timestamps: false})
 Event.belongsToMany(User, {through: ViewedEvents})
-User.belongsToMany(Event, {through: ViewedEvents})
+User.belongsToMany(Event, {through: ViewedEvents, as: 'viewed'})
 module.exports.ViewedEvents = ViewedEvents
 
 

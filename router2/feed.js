@@ -41,20 +41,20 @@ feed.get('/',  async (req, res) => {
         return res.status(401).json({message: 'authorization error'})
     }
 
+    let user = await db.User.findByPk(req._id)
+
     let events = await db.Event.findAll({
-        attributes: ['id', 'name', 'date', 'addressId', 'seats'],
         where: {
             date: {
                 [Op.gte]: moment().toDate()
+            },
+            id: {
+                [Op.in]: (await db.ViewedEvents.findAll({where: {UserId: req._id}})).map(ve => ve.EventId)
             }
         }
     })
 
     let addresses = await db.Address.findAll({})
-
-    let eventTagRels = await db.EventTagRel.findAll({})
-
-    let tags = await db.Tag.findAll({})
 
     let favorites = await db.Favorites.findAll({
         where: {
@@ -62,43 +62,33 @@ feed.get('/',  async (req, res) => {
         }
     })
 
-    let jrs = await db.JoinRequest.findAll({
-        where: {
-            userId: req._id
-        }
-    })
 
     let result = []
 
     for (let event of events) {
         let addressName = addresses.filter((address) => address.id === event.addressId)[0].name
-        let etrs = eventTagRels.filter((etr) => etr.eventId === event.id)
 
         // Тэги соответствующие ивенту event
-        let eventTagNames = []
-        for (let etr of etrs) {
-            eventTagNames.push(tags.filter((tag) => tag.id === etr.tagId)[0].title)
-        }
+        let tags = (await event.getTags()).map(tag => {
+            return {id: tag.id, title: tag.title}
+        })
 
         let isFavorite = favorites.filter((favorite) => favorite.eventId === event.id).length > 0;
-
-        let jr = jrs.filter((jr) => jr.eventId === event.id)[0]
-
-        let accepted = jr ? jr.accepted : null
-
 
         result.push({
             id: event.id,
             name: event.name,
             date: event.date,
-            tags: eventTagNames,
             address: addressName,
+            photo: event.photo,
             seats: event.seats,
+            tags: tags,
             isFavorite: isFavorite,
-            accepted: accepted
+            request: await db.JoinRequest.findOne({attributes: ['status'], where: {UserId: req._id, EventId: event.id}})
         })
     }
 
+    console.log(result)
     res.json(result)
 })
 
@@ -106,7 +96,7 @@ feed.get('/',  async (req, res) => {
 /**
  * Получение новых ивентов (свайпер)
  */
-feed.get('/new',[auth], async (req, res) => {
+feed.get('/new', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
@@ -121,7 +111,7 @@ feed.get('/new',[auth], async (req, res) => {
                 [Op.gte]: moment().toDate()
             },
             id: {
-                [Op.notIn]: (await user.getEvents()).map(event => event.id)
+                [Op.notIn]: (await user.getViewed()).map(event => event.id)
             }
         },
         include: [{
@@ -130,7 +120,7 @@ feed.get('/new',[auth], async (req, res) => {
         }]
     })
 
-    user.addEvents(events)
+    user.addViewed(events)
 
     res.json(events)
 })
