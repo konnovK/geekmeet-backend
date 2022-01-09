@@ -51,9 +51,6 @@ module.exports.Tag = Tag
 
 
 
-/**
- * Модель связи пользователя и тэга
- */
 // const UserTagRel = sequelize.define('UserTagRel', {
 //     userId: {
 //         type: DataTypes.INTEGER,
@@ -75,13 +72,14 @@ module.exports.Tag = Tag
 //     timestamps: false
 // })
 // module.exports.UserTagRel = UserTagRel
+/**
+ * Модель связи пользователя и тэга
+ */
 const UserTagRel = sequelize.define('UserTagRel', {}, {timestamps: false})
 User.belongsToMany(Tag, {through: UserTagRel})
 Tag.belongsToMany(User, {through: UserTagRel})
 module.exports.UserTagRel = UserTagRel
 
-// Tag.belongsToMany(User, {through: 'UserTagRel'})
-// User.belongsToMany(Tag, {through: 'UserTagRel'})
 
 
 /**
@@ -108,6 +106,8 @@ const FriendRequest = sequelize.define('FriendRequest', {
         type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
         allowNull: false
     }
+}, {
+    timestamps: false
 })
 module.exports.FriendRequest = FriendRequest
 
@@ -128,6 +128,8 @@ const Address = sequelize.define('Address',{
     metro: {
         type: DataTypes.STRING
     }
+}, {
+    timestamps: false
 })
 module.exports.Address = Address
 
@@ -173,6 +175,8 @@ const Event = sequelize.define('Event', {
 }, {
     timestamps: false
 })
+Event.belongsTo(Address, {foreignKey: 'addressId'})
+Address.hasMany(Event, {foreignKey: 'addressId'})
 module.exports.Event = Event
 
 
@@ -201,6 +205,8 @@ const JoinRequest = sequelize.define('JoinRequest', {
         type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
         allowNull: false
     }
+}, {
+    timestamps: false
 })
 module.exports.JoinRequest = JoinRequest
 
@@ -209,26 +215,29 @@ module.exports.JoinRequest = JoinRequest
 /**
  * Модель связи ивента и тэга
  */
-const EventTagRel = sequelize.define('EventTagRel', {
-    eventId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Event,
-            key: "id"
-        }
-    },
-    tagId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Tag,
-            key: "id"
-        }
-    }
-}, {
-    timestamps: false
-})
+// const EventTagRel = sequelize.define('EventTagRel', {
+//     eventId: {
+//         type: DataTypes.INTEGER,
+//         allowNull: false,
+//         references: {
+//             model: Event,
+//             key: "id"
+//         }
+//     },
+//     tagId: {
+//         type: DataTypes.INTEGER,
+//         allowNull: false,
+//         references: {
+//             model: Tag,
+//             key: "id"
+//         }
+//     }
+// }, {
+//     timestamps: false
+// })
+const EventTagRel = sequelize.define('EventTagRel', {}, {timestamps: false})
+Event.belongsToMany(Tag, {through: EventTagRel})
+Tag.belongsToMany(Event, {through: EventTagRel})
 module.exports.EventTagRel = EventTagRel
 
 
