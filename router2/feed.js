@@ -106,17 +106,22 @@ feed.get('/',  async (req, res) => {
 /**
  * Получение новых ивентов (свайпер)
  */
-feed.get('/new',  async (req, res) => {
+feed.get('/new',[auth], async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
     }
+
+    let user = await db.User.findByPk(req._id)
 
     let events = await db.Event.findAll({
         attributes: ['id', 'name', 'date', 'photo'],
         where: {
             date: {
                 [Op.gte]: moment().toDate()
+            },
+            id: {
+                [Op.notIn]: (await user.getEvents()).map(event => event.id)
             }
         },
         include: [{
@@ -124,6 +129,8 @@ feed.get('/new',  async (req, res) => {
             attributes: {exclude: ['id']}
         }]
     })
+
+    user.addEvents(events)
 
     res.json(events)
 })

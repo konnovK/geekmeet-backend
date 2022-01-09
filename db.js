@@ -337,26 +337,9 @@ module.exports.Favorites = Favorites
 /**
  * Модель просмотренных ивентов
  */
-const ViewedEvents = sequelize.define('ViewedEvents', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    eventId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Event,
-            key: "id"
-        }
-    }
-}, {
-    timestamps: false
-})
+const ViewedEvents = sequelize.define('ViewedEvents', {}, {timestamps: false})
+Event.belongsToMany(User, {through: ViewedEvents})
+User.belongsToMany(Event, {through: ViewedEvents})
 module.exports.ViewedEvents = ViewedEvents
 
 
