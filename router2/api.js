@@ -8,4 +8,7 @@ api.use('/user', user)
 const tag = require('./tag')
 api.use('/tag', tag)
 
+const feed = require('./feed')
+api.use('/feed', feed)
+
 module.exports = api
