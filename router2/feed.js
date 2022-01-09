@@ -41,8 +41,6 @@ feed.get('/',  async (req, res) => {
         return res.status(401).json({message: 'authorization error'})
     }
 
-    let user = await db.User.findByPk(req._id)
-
     let events = await db.Event.findAll({
         where: {
             date: {
@@ -69,9 +67,8 @@ feed.get('/',  async (req, res) => {
         let addressName = addresses.filter((address) => address.id === event.addressId)[0].name
 
         // Тэги соответствующие ивенту event
-        let tags = (await event.getTags()).map(tag => {
-            return {id: tag.id, title: tag.title}
-        })
+        let tags = await event.getTags()
+        tags.forEach((tag) => delete tag["dataValues"]["EventTagRel"])
 
         let isFavorite = favorites.filter((favorite) => favorite.eventId === event.id).length > 0;
 
@@ -88,7 +85,7 @@ feed.get('/',  async (req, res) => {
         })
     }
 
-    console.log(result)
+    // console.log(result)
     res.json(result)
 })
 
