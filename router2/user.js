@@ -70,13 +70,6 @@ user.post('/register', async (req, res) => {
         avatar
     })
 
-    // Создаем Связи этого юзера с тегами
-    // for (const tag_id of tags) {
-    //     await db.UserTagRel.create({
-    //         userId: user.id,
-    //         tagId: tag_id
-    //     })
-    // }
     await user.addTags(tags)
 
 
@@ -94,21 +87,6 @@ user.get('/:id', [auth], async (req, res) => {
     let id = req.params['id']
 
     let user = await db.User.findByPk(id)
-
-
-    // let utrs = (await db.UserTagRel.findAll({
-    //     attributes: ['TagId'],
-    //     where: {
-    //         UserId: id
-    //     }
-    // })).map(utr => utr.TagId)
-    // let tags = await db.Tag.findAll({
-    //     where: {
-    //         id: {
-    //             [Op.in]: utrs
-    //         }
-    //     }
-    // })
 
     let tags = await db.Tag.findAll({
         include: [{
