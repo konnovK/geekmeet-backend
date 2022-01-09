@@ -4,7 +4,6 @@ const md5 = require('md5')
 const jwt = require('jsonwebtoken')
 const { Op } = require('sequelize')
 const auth = require('../authorization')
-const {User, UserTagRel} = require("../db");
 
 
 const user = express.Router()
@@ -88,16 +87,8 @@ user.get('/:id', [auth], async (req, res) => {
 
     let user = await db.User.findByPk(id)
 
-    let tags = await db.Tag.findAll({
-        include: [{
-            model: User,
-            where: {
-                id: id
-            },
-            as: UserTagRel,
-            attributes: []
-        }]
-    })
+    let tags = await user.getTags()
+    tags.forEach((tag) => delete tag["dataValues"]["UserTagRel"])
 
     let friendRequest = await db.FriendRequest.findAll({
         attributes: ['toUserId' , 'status'],
@@ -143,42 +134,32 @@ user.get('/:id', [auth], async (req, res) => {
 user.patch('/', [auth], async (req, res) => {
     let _id = req._id;
 
-    let body = req.body;
+    let user = await db.User.findByPk(_id)
 
-    let non_empty = {}
-
-    for (const [key, value] of Object.entries(body)) {
-        if (value) {
-            if (key === 'password') {
-                non_empty[key] = md5(value)
-            } else {
-                // TODO: удалять старые теги
-                if (key === 'tags') {
-                    for (let tag of body[key]) {
-                        if ((await db.UserTagRel.findAll({where: {userId: _id, tagId: tag}})).length === 0) {
-                            await db.UserTagRel.create({
-                                userId: _id,
-                                tagId: tag
-                            })
-                        }
-                    }
-                } else {
-                    non_empty[key] = value
-                }
-            }
-        }
-    }
-
+    // Получаем внесенные изменения
+    let updates = req.body;
 
     // Валидация
-    if (non_empty["login"] && (await db.User.findAll({ where: { login: non_empty["login"] } })).length > 0) {
+    if (updates["login"] && (await db.User.findOne({ where: { login: updates["login"] } })).length > 0) {
         return res.status(400).json({message: 'user with this login already exists'})
     }
-    if (non_empty["email"] && (await db.User.findAll({ where: { email: non_empty["email"] } })).length > 0) {
+    if (updates["email"] && (await db.User.findOne({ where: { email: updates["email"] } })).length > 0) {
         return res.status(400).json({message: 'user with this email already exists'})
     }
 
-    await db.User.update(non_empty, {
+    // Кодируем пароль
+    if (updates["password"]) {
+        updates["password"] = md5(updates["password"])
+    }
+
+    // Меняем тэги
+    if (updates["tags"]) {
+        await user.setTags(updates["tags"])
+        delete updates["tags"]
+    }
+
+
+    await db.User.update(updates, {
         where: { id: _id }
     })
 
