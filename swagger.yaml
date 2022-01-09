@@ -271,10 +271,17 @@ paths:
                       type: string
                     date:
                       type: string
-                    address:
-                      type: string
                     photo:
                       type: string
+                    address:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        address:
+                          type: string
+                        metro:
+                          type: string
 
   /event/create:
     post:
@@ -301,7 +308,14 @@ paths:
                 seats:
                   type: integer
                 address:
-                  type: string
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: string
+                    metro:
+                      type: string
                 tags:
                   type: array
                   items:
