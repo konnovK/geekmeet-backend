@@ -1,7 +1,6 @@
 const express = require('express')
 const db = require('../db')
 const auth = require('../authorization')
-const moment = require('moment')
 const {User, Address, Tag, EventTagRel} = require("../db");
 
 const event = express.Router()
@@ -65,7 +64,7 @@ event.post('/', async (req, res) => {
 
     let event = await db.Event.create({
         name: name,
-        date: moment().add(30, 'days').toDate(),
+        date: date,
         addressId: address1.id,
         creatorId: req._id,
         about: about,
