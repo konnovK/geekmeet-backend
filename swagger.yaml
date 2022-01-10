@@ -20,6 +20,9 @@ tags:
   - name: event
     description: "Действия с ивентами"
     
+  - name: joinRequest
+    description: "Действия с заявками на ивенты"
+    
   - name: tag
     description: "Действия с тэгами"
 
@@ -415,10 +418,7 @@ paths:
                   isFavorite:
                     type: boolean
                   request:
-                    type: object
-                    properties:
-                      status:
-                        type: string
+                    type: string
   
     patch:
       summary: Редактирование своего ивента
@@ -501,6 +501,63 @@ paths:
       responses:
         '200':    # status code
           description: Удаление прошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{id}/request/:
+    post:
+      summary: Подать заявку на ивент с id
+      tags:
+        - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Заявка на ивент подана
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    delete:
+      summary: Отозвать заявку на ивент
+      tags:
+        - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Заявка отозвана
         '400':    # status code
           description: Произошла ошибка
           content:
