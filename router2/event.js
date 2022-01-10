@@ -2,10 +2,12 @@ const express = require('express')
 const db = require('../db')
 const auth = require('../authorization')
 const moment = require('moment')
+const {User, Address, Tag, EventTagRel} = require("../db");
 
 const event = express.Router()
 event.use(express.json())
 event.use(auth)
+
 
 
 /**
@@ -75,6 +77,93 @@ event.post('/create', async (req, res) => {
 
     res.json({message: `event ${event.id} has been created`})
 })
+
+
+
+/**
+ * Получение информации об ивенте по id
+ */
+event.get('/:id', async (req, res) => {
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    let event = await db.Event.findByPk(req.params['id'], {
+        attributes: {
+            exclude: ["creatorId", "addressId"]
+        },
+        include: [
+            // Подключаем юзера-создателя
+            {
+                model: User,
+                as: "Creator",
+                attributes: ["id", "avatar"]
+            },
+            // Подключаем адрес
+            {
+                model: Address,
+                attributes: {exclude: ['id']}
+            },
+            // Подключаем тэги
+            {
+                model: Tag,
+                as: EventTagRel,
+                through: {attributes: []}
+            },
+            // Подключаем участников
+            {
+                model: User,
+                as: "Member",
+                attributes: ["id", "avatar"],
+                through: {
+                    attributes: [],
+                    where: {
+                        status: 'accepted'
+                    }
+                }
+            },
+            // Подключаем favorites
+            {
+                model: User,
+                as: "Favorite",
+                attributes: ["id"],
+                through: {
+                    attributes: [],
+                    where: {
+                        UserId: req._id
+                    }
+                }
+            }
+        ]
+    })
+
+    // request
+    let request = await db.JoinRequest.findOne({
+        where: {
+            UserId: req._id,
+            EventId: event.id,
+        },
+        attributes: ["status"]
+    })
+
+    let result = {
+        id: event.id,
+        photo: event.photo,
+        name: event.name,
+        tags: event.Tags,
+        seats: event.seats,
+        date: event.date,
+        Address: event.Address,
+        Creator: event.Creator,
+        about: event.about,
+        members: event.Member,
+        isFavorite: event.Favorite.length === 1,
+        request: request
+    }
+
+    res.json(result)
+})
+
 
 
 module.exports = event
