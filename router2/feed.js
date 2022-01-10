@@ -103,12 +103,6 @@ feed.get('/',  async (req, res) => {
         ]
     })
 
-    // let favorites = await db.Favorites.findAll({
-    //     where: {
-    //         userId: _id
-    //     }
-    // })
-
 
     let result = []
 
@@ -119,6 +113,8 @@ feed.get('/',  async (req, res) => {
         let request = event.Member
         if (request.length === 0) {
             request = null
+        } else {
+            request = request[0].JoinRequest.status
         }
 
         result.push({
