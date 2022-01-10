@@ -288,4 +288,33 @@ event.post('/:id/request', async (req, res) => {
 
 
 
+/**
+ * Добавить ивент в избранное или убрать
+ */
+event.post('/:id/favorite', async (req, res) => {
+    let _id = req._id;
+    let user = await db.User.findByPk(_id)
+    let event = await db.Event.findByPk(req.params['id'])
+
+    // Валидация
+    if (!_id || event.creatorId === _id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    if (await db.Favorites.findOne({
+        where: {
+            UserId: _id,
+            EventId: event.id
+        }
+    })) {
+        user.removeFavorite(event)
+    } else {
+        user.addFavorite(event)
+    }
+
+    res.json()
+})
+
+
+
 module.exports = event

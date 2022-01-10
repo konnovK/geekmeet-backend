@@ -108,8 +108,6 @@ feed.get('/',  async (req, res) => {
 
     for (let event of events) {
 
-        // let isFavorite = favorites.filter((favorite) => favorite.eventId === event.id).length > 0;
-
         let request = event.Member
         if (request.length === 0) {
             request = null
