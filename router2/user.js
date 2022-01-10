@@ -69,8 +69,9 @@ user.post('/register', async (req, res) => {
         avatar
     })
 
-    await user.addTags(tags)
-
+    if (tags && tags.length > 0) {
+        await user.addTags(tags)
+    }
 
     let token = createToken(user)
     res.json({token: token})
@@ -140,10 +141,10 @@ user.patch('/', [auth], async (req, res) => {
     let updates = req.body;
 
     // Валидация
-    if (updates["login"] && (await db.User.findOne({ where: { login: updates["login"] } })).length > 0) {
+    if (updates["login"] && (await db.User.findAll({ where: { login: updates["login"] } })).length > 0) {
         return res.status(400).json({message: 'user with this login already exists'})
     }
-    if (updates["email"] && (await db.User.findOne({ where: { email: updates["email"] } })).length > 0) {
+    if (updates["email"] && (await db.User.findAll({ where: { email: updates["email"] } })).length > 0) {
         return res.status(400).json({message: 'user with this email already exists'})
     }
 
