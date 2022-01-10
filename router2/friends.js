@@ -36,16 +36,15 @@ friends.post('/:id', async (req, res) => {
             return res.status(400).json({message: 'request is already rejected'})
         }
         await request.destroy()
+        return res.json({message: 'delete request'})
     } else {
         await db.FriendRequest.create({
             UserId: req._id,
             FriendId: id,
             status: 'sent'
         })
+        return res.json({message: 'create request'})
     }
-
-
-    return res.send()
 })
 
 

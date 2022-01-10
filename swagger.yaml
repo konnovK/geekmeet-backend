@@ -13,16 +13,16 @@ servers:
 tags:
   - name: "user"
     description: "Действия с пользователем"
-    
+
   - name: feed
     description: "Действия с лентой"
-    
+
   - name: event
     description: "Действия с ивентами"
-    
-  - name: joinRequest
-    description: "Действия с заявками на ивенты"
-    
+
+  - name: friend
+    description: "Заявки в друзья и действия с ними"
+
   - name: tag
     description: "Действия с тэгами"
 
@@ -419,7 +419,7 @@ paths:
                     type: boolean
                   request:
                     type: string
-  
+
     patch:
       summary: Редактирование своего ивента
       tags:
@@ -592,4 +592,124 @@ paths:
                 properties:
                   message:
                     type: string
-  
+
+  /friend/{id}:
+    post:
+      summary: Создать (отменить) заявку в друзья
+      tags:
+        - friend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      summary: Убрать из друзей
+      tags:
+        - friend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Удаление произошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /friend/{id}/accept:
+    patch:
+      summary: Принять заявку в друзья
+      tags:
+        - friend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /friend/{id}/reject:
+    patch:
+      summary: Отклонить заявку в друзья
+      tags:
+        - friend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
