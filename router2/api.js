@@ -1,4 +1,5 @@
 const express = require('express')
+const bodyParser = require("express");
 
 const api = express.Router()
 
@@ -13,5 +14,7 @@ api.use('/feed', feed)
 
 const event = require('./event')
 api.use('/event', event)
+
+api.use(bodyParser.json({ limit: '50mb' }))
 
 module.exports = api
