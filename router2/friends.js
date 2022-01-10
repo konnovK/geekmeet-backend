@@ -17,11 +17,6 @@ friends.get('/', async (req, res) => {
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
     }
-    let event = await db.Event.findByPk(req.params['id'])
-
-    if (event.creatorId !== req._id) {
-        return res.status(400).json({message: 'not your event'})
-    }
 
     let requestIds = (await db.FriendRequest.findAll({
         where: {
