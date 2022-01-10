@@ -262,37 +262,47 @@ event.post('/:id/request', async (req, res) => {
         return res.status(401).json({message: 'authorization error'})
     }
 
-    await db.JoinRequest.create({
-        UserId: _id,
-        EventId: event.id,
-        status: 'sent'
-    })
+    if (await db.JoinRequest.findOne({
+        where: {
+            UserId: _id,
+            EventId: event.id,
+        }
+    })) {
+        return res.status(400).json({message: 'request already exists'})
+    } else {
+        await db.JoinRequest.create({
+            UserId: _id,
+            EventId: event.id,
+            status: 'sent'
+        })
+    }
 
     res.json()
 })
 
 
 
-// /**
-//  * Удаление ивента
-//  */
-// event.delete('/:id', async (req, res) => {
-//     let _id = req._id;
-//     let event = await db.Event.findByPk(req.params['id'])
-//
-//     // Валидация
-//     if (!_id || event.creatorId !== _id) {
-//         return res.status(401).json({message: 'authorization error'})
-//     }
-//
-//     await db.Event.destroy({
-//         where: {
-//             id: event.id
-//         }
-//     })
-//
-//     res.json()
-// })
+/**
+ * Отменить заявку на ивент
+ */
+event.delete('/:id/request', async (req, res) => {
+    let _id = req._id;
+    let event = await db.Event.findByPk(req.params['id'])
+
+    // Валидация
+    if (!_id || event.creatorId === _id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    await db.JoinRequest.destroy({
+        where: {
+            UserId: _id,
+            EventId: event.id,
+        }
+    })
+
+    res.json()
+})
 
 
 
