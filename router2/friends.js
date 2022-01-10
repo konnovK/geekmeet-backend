@@ -9,6 +9,21 @@ friends.use(auth)
 
 
 /**
+ * Получить все заявки в друзья
+ */
+friends.get('/', async (req, res) => {
+    let requests = await db.FriendRequest.findAll({
+        attributes: [['UserId', 'fromId'], 'status'],
+        where: {
+            FriendId: req._id,
+            status: 'sent'
+        }
+    })
+    res.json(requests)
+})
+
+
+/**
  * Создать или удалить заявку в друзья
  */
 friends.post('/:id', async (req, res) => {

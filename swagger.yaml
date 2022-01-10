@@ -713,3 +713,38 @@ paths:
                 properties:
                   message:
                     type: string
+
+  /friend/:
+    get:
+      summary: Получить все заявки вам в друзья
+      tags:
+        - friend
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    fromId:
+                      type: integer
+                    status:
+                      type: string
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
