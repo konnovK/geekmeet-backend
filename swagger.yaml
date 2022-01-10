@@ -512,6 +512,47 @@ paths:
                     type: string
 
   /event/{id}/request/:
+    get:
+      summary: Получить список заявок на ваш ивент
+      tags:
+        - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Список пользователей, подавших заявку на ивент
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  avatar:
+                    type: string
+                  name:
+                    type: string
+                  about:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+
     post:
       summary: Подать или отменить заявку на ивент с id
       tags:

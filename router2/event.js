@@ -2,6 +2,7 @@ const express = require('express')
 const db = require('../db')
 const auth = require('../authorization')
 const {User, Address, Tag, EventTagRel} = require("../db");
+const {Op} = require("sequelize");
 
 const event = express.Router()
 event.use(express.json())
@@ -314,6 +315,73 @@ event.post('/:id/favorite', async (req, res) => {
 
     res.json()
 })
+
+
+
+/**
+ * Получить все заявки на ваш ивент по id ивента
+ */
+event.get('/:id/request', async (req, res) => {
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+    let event = await db.Event.findByPk(req.params['id'])
+
+    if (event.creatorId !== req._id) {
+        return res.status(400).json({message: 'not your event'})
+    }
+
+    let requestIds = (await db.JoinRequest.findAll({
+        where: {
+            EventId: event.id,
+            status: 'sent'
+        }
+    })).map(request => request.UserId)
+
+    let users = (await db.User.findAll({
+        attributes: ['id', 'avatar', 'login', 'about'],
+        where: {
+            id: {
+                [Op.in]: requestIds
+            }
+        },
+        include: {
+            model: Tag,
+            as: 'tags',
+            through: {attributes: []}
+        }
+    }))
+
+    res.json(users)
+})
+
+
+// /**
+//  * Принять заявку пользователя на ивент
+//  */
+// event.patch('/:id/request/accept', async (req, res) => {
+//     let _id = req._id;
+//     let user = await db.User.findByPk(_id)
+//     let event = await db.Event.findByPk(req.params['id'])
+//
+//     // Валидация
+//     if (!_id || event.creatorId === _id) {
+//         return res.status(401).json({message: 'authorization error'})
+//     }
+//
+//     if (await db.Favorites.findOne({
+//         where: {
+//             UserId: _id,
+//             EventId: event.id
+//         }
+//     })) {
+//         user.removeFavorite(event)
+//     } else {
+//         user.addFavorite(event)
+//     }
+//
+//     res.json()
+// })
 
 
 

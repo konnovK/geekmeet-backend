@@ -158,8 +158,8 @@ Address.hasMany(Event, {foreignKey: 'addressId'})
  * Модель связи пользователя и тэга
  */
 const UserTagRel = sequelize.define('UserTagRel', {}, {timestamps: false})
-User.belongsToMany(Tag, {through: UserTagRel})
-Tag.belongsToMany(User, {through: UserTagRel})
+User.belongsToMany(Tag, {as: 'tags', through: UserTagRel})
+Tag.belongsToMany(User, {as: 'tags', through: UserTagRel})
 module.exports.UserTagRel = UserTagRel
 
 
