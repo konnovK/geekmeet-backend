@@ -13,7 +13,7 @@ event.use(auth)
 /**
  * Создание нового ивента
  */
-event.post('/create', async (req, res) => {
+event.post('/', async (req, res) => {
 
     if (!req._id) {
         return res.status(401).json({message: 'authorization error'})
