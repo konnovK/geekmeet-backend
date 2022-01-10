@@ -153,8 +153,8 @@ event.get('/:id', async (req, res) => {
         tags: event.Tags,
         seats: event.seats,
         date: event.date,
-        Address: event.Address,
-        Creator: event.Creator,
+        address: event.Address,
+        creator: event.Creator,
         about: event.about,
         members: event.Member,
         isFavorite: event.Favorite.length === 1,
@@ -162,6 +162,62 @@ event.get('/:id', async (req, res) => {
     }
 
     res.json(result)
+})
+
+
+
+event.patch('/:id', async (req, res) => {
+    let _id = req._id;
+    let event = await db.Event.findByPk(req.params['id'])
+
+    // Валидация
+    if (!_id || event.creatorId !== _id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    // Получаем внесенные изменения
+    let updates = req.body;
+
+    // Меняем адрес
+    if (updates["address"]) {
+        // Проверка на адрес, повторяющийся в БД
+        let address = updates["address"]
+        let existingAddress = await db.Address.findOne({
+            where: {
+                name: address.name,
+                address: address.address
+            }
+        })
+
+        // Если адрес уже есть в БД, используем его ID,
+        // если нет - записываем его в БД и используем ID
+        if (existingAddress) {
+            address.id = existingAddress.id
+        } else {
+            address = await db.Address.create({
+                name: address.name,
+                address: address.address,
+                metro: address.metro ? address.metro : null
+            })
+        }
+
+        // добавляем к измнениям айди нового адреса и удаляем сам адрес
+        updates["addressId"] = address.id
+        delete updates["address"]
+    }
+
+    // Меняем тэги
+    if (updates["tags"]) {
+        await event.setTags(updates["tags"])
+        delete updates["tags"]
+    }
+
+
+    await db.Event.update(updates, {
+        where: { id: event.id }
+    })
+
+    res.json()
 })
 
 
