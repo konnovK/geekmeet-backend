@@ -113,8 +113,6 @@ const Event = sequelize.define('Event', {
 }, {
     timestamps: false
 })
-Event.belongsTo(Address, {foreignKey: 'addressId'})
-Address.hasMany(Event, {foreignKey: 'addressId'})
 module.exports.Event = Event
 
 
@@ -124,12 +122,74 @@ module.exports.Event = Event
 
 // МОДЕЛИ СВЯЗЕЙ
 /**
+ * Связь ивента и пользователя-создателя
+ */
+Event.belongsTo(User, {as: 'Creator', foreignKey: 'creatorId'})
+User.hasMany(Event, {foreignKey: 'creatorId'})
+
+
+
+/**
+ * Модель заявки на ивент
+ */
+const JoinRequest = sequelize.define('JoinRequest', {
+    status: {
+        type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
+        allowNull: false
+    }
+}, {
+    timestamps: false
+})
+User.belongsToMany(Event, {through: JoinRequest})
+Event.belongsToMany(User, {as: 'Member', through: JoinRequest})
+module.exports.JoinRequest = JoinRequest
+
+
+
+/**
+ * Связь ивента и адреса
+ */
+Event.belongsTo(Address, {foreignKey: 'addressId'})
+Address.hasMany(Event, {foreignKey: 'addressId'})
+
+
+
+/**
  * Модель связи пользователя и тэга
  */
 const UserTagRel = sequelize.define('UserTagRel', {}, {timestamps: false})
 User.belongsToMany(Tag, {through: UserTagRel})
 Tag.belongsToMany(User, {through: UserTagRel})
 module.exports.UserTagRel = UserTagRel
+
+
+
+/**
+ * Модель связи ивента и тэга
+ */
+const EventTagRel = sequelize.define('EventTagRel', {}, {timestamps: false})
+Event.belongsToMany(Tag, {through: EventTagRel})
+Tag.belongsToMany(Event, {through: EventTagRel})
+module.exports.EventTagRel = EventTagRel
+
+
+
+/**
+ * Модель избранных ивентов
+ */
+const Favorites = sequelize.define('Favorites', {}, {timestamps: false})
+User.belongsToMany(Event, {as: 'Favorite', through: Favorites})
+Event.belongsToMany(User, {as: 'Favorite', through: Favorites})
+module.exports.Favorites = Favorites
+
+
+/**
+ * Модель просмотренных ивентов
+ */
+const ViewedEvents = sequelize.define('ViewedEvents', {}, {timestamps: false})
+User.belongsToMany(Event, {as: 'Viewed', through: ViewedEvents})
+Event.belongsToMany(User, {as: 'Viewed', through: ViewedEvents})
+module.exports.ViewedEvents = ViewedEvents
 
 
 
@@ -161,33 +221,6 @@ const FriendRequest = sequelize.define('FriendRequest', {
     timestamps: false
 })
 module.exports.FriendRequest = FriendRequest
-
-
-
-/**
- * Модель заявки на ивент
- */
-const JoinRequest = sequelize.define('JoinRequest', {
-    status: {
-        type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
-        allowNull: false
-    }
-}, {
-    timestamps: false
-})
-Event.belongsToMany(User, {through: JoinRequest})
-User.belongsToMany(Event, {through: JoinRequest, as: 'joinRequests'})
-module.exports.JoinRequest = JoinRequest
-
-
-
-/**
- * Модель связи ивента и тэга
- */
-const EventTagRel = sequelize.define('EventTagRel', {}, {timestamps: false})
-Event.belongsToMany(Tag, {through: EventTagRel})
-Tag.belongsToMany(Event, {through: EventTagRel})
-module.exports.EventTagRel = EventTagRel
 
 
 
@@ -254,42 +287,6 @@ const GroupMessage = sequelize.define('GroupMessage', {
     }
 })
 module.exports.GroupMessage = GroupMessage
-
-
-
-/**
- * Модель избранных ивентов
- */
-const Favorites = sequelize.define('Favorites', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    eventId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Event,
-            key: "id"
-        }
-    }
-}, {
-    timestamps: false
-})
-module.exports.Favorites = Favorites
-
-
-/**
- * Модель просмотренных ивентов
- */
-const ViewedEvents = sequelize.define('ViewedEvents', {}, {timestamps: false})
-Event.belongsToMany(User, {through: ViewedEvents})
-User.belongsToMany(Event, {through: ViewedEvents, as: 'viewed'})
-module.exports.ViewedEvents = ViewedEvents
 
 
 
