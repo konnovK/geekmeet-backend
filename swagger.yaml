@@ -283,7 +283,7 @@ paths:
                         metro:
                           type: string
 
-  /event/create:
+  /event/:
     post:
       summary: Создание нового ивента
       tags:
@@ -332,6 +332,136 @@ paths:
       responses:
         '200':    # status code
           description: Ивент создан
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{id}:
+    get:
+      summary: Получение информации об ивенте по id
+      tags:
+        - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Данные об ивенте по его id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  photo:
+                    type: string
+                  name:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                  seats:
+                    type: integer
+                  date:
+                    type: string
+                  address:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      address:
+                        type: string
+                      metro:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      avatar:
+                        type: string
+                  about:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        avatar:
+                          type: string
+                  isFavorite:
+                    type: boolean
+                  request:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+  
+    patch:
+      summary: Редактирование своего ивента
+      tags:
+        - event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                date:
+                  type: string
+                seats:
+                  type: integer
+                address:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    address:
+                      type: string
+                    metro:
+                      type: string
+                tags:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                about:
+                  type: string
+                photo:
+                  type: string
+      responses:
+        '200':    # status code
+          description: Изменение прошло успешно
         '400':    # status code
           description: Произошла ошибка
           content:
