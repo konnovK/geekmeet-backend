@@ -95,4 +95,42 @@ friends.patch('/:id/reject', async (req, res) => {
     res.send()
 })
 
+
+/**
+ * Удалить чела из друзей
+ */
+friends.delete('/:id', async (req, res) => {
+    let id = req.params['id']
+
+    let request = await db.FriendRequest.findOne({
+        where: {
+            [Op.or]: [
+                {
+                    UserId: req._id,
+                    FriendId: id
+                },
+                {
+                    UserId: id,
+                    FriendId: req._id
+                }
+            ]
+        }
+    })
+
+    if (!request) {
+        return res.status(400).json({message: 'request is none'})
+    }
+
+    if (request.status === 'accepted') {
+        await request.destroy()
+    } else {
+        return res.status(400).json({message: 'he is not your friend'})
+    }
+
+    res.send()
+})
+
+
+
+
 module.exports = friends
