@@ -424,6 +424,17 @@ paths:
       summary: Редактирование своего ивента
       tags:
         - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -462,6 +473,34 @@ paths:
       responses:
         '200':    # status code
           description: Изменение прошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    delete:
+      summary: Удаление ивента
+      tags:
+        - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Удаление прошло успешно
         '400':    # status code
           description: Произошла ошибка
           content:

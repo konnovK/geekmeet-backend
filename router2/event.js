@@ -164,7 +164,9 @@ event.get('/:id', async (req, res) => {
 })
 
 
-
+/**
+ * Редактирование ивента
+ */
 event.patch('/:id', async (req, res) => {
     let _id = req._id;
     let event = await db.Event.findByPk(req.params['id'])
@@ -214,6 +216,29 @@ event.patch('/:id', async (req, res) => {
 
     await db.Event.update(updates, {
         where: { id: event.id }
+    })
+
+    res.json()
+})
+
+
+
+/**
+ * Удаление ивента
+ */
+event.delete('/:id', async (req, res) => {
+    let _id = req._id;
+    let event = await db.Event.findByPk(req.params['id'])
+
+    // Валидация
+    if (!_id || event.creatorId !== _id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+
+    await db.Event.destroy({
+        where: {
+            id: event.id
+        }
     })
 
     res.json()
