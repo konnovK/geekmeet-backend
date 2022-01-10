@@ -529,7 +529,36 @@ paths:
             type: string
       responses:
         '200':    # status code
-          description: Заявка на ивент подана или отменена
+          description: Действие произошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{id}/favorite/:
+    post:
+      summary: Добавить ивент в избранное или убрать
+      tags:
+        - event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
         '400':    # status code
           description: Произошла ошибка
           content:
