@@ -92,14 +92,14 @@ user.get('/:id', [auth], async (req, res) => {
     tags.forEach((tag) => delete tag["dataValues"]["UserTagRel"])
 
     let friendRequest = await db.FriendRequest.findAll({
-        attributes: ['toUserId' , 'status'],
+        attributes: ['FriendId' , 'status'],
         where: {
             [Op.or]: [
                 {
-                    fromUserId: _id
+                    UserId: _id
                 },
                 {
-                    toUserId: _id
+                    FriendId: _id
                 }
             ]
         }
@@ -113,7 +113,7 @@ user.get('/:id', [auth], async (req, res) => {
     } else {
         request = {
             status: friendRequest[0].status,
-            target: friendRequest[0].toUserId
+            target: friendRequest[0].FriendId
         }
     }
 

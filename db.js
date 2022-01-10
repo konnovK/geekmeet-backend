@@ -197,22 +197,6 @@ module.exports.ViewedEvents = ViewedEvents
  * Модель запроса в друзья
  */
 const FriendRequest = sequelize.define('FriendRequest', {
-    fromUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
-    toUserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
     status: {
         type: DataTypes.ENUM('sent', 'accepted', 'rejected'),
         allowNull: false
@@ -220,6 +204,8 @@ const FriendRequest = sequelize.define('FriendRequest', {
 }, {
     timestamps: false
 })
+User.belongsToMany(User, {as: 'Friend', through: FriendRequest})
+// User.belongsToMany(User, {as: 'ToFriend', through: FriendRequest})
 module.exports.FriendRequest = FriendRequest
 
 

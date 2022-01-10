@@ -15,6 +15,9 @@ api.use('/feed', feed)
 const event = require('./event')
 api.use('/event', event)
 
+const friends = require('./friends')
+api.use('/friends', friends)
+
 api.use(bodyParser.json({ limit: '50mb' }))
 
 module.exports = api
