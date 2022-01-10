@@ -12,14 +12,31 @@ friends.use(auth)
  * Получить все заявки в друзья
  */
 friends.get('/', async (req, res) => {
-    let requests = await db.FriendRequest.findAll({
-        attributes: [['UserId', 'fromId'], 'status'],
+    let requestIds = (await db.FriendRequest.findAll({
         where: {
             FriendId: req._id,
             status: 'sent'
         }
-    })
-    res.json(requests)
+    })).map(request => request.UserId)
+    let users = (await db.User.findAll({
+        attributes: ['id', 'avatar', 'login', 'about'],
+        where: {
+            id: {
+                [Op.in]: requestIds
+            }
+        }
+    }))
+    let usersWithTags = []
+    for (let user of users) {
+        usersWithTags.push({
+            id: user.id,
+            login: user.login,
+            about: user.about,
+            avatar: user.avatar,
+            tags: (await user.getTags()).map(tag => {return {id: tag.id, title: tag.title}})
+        })
+    }
+    res.json(usersWithTags)
 })
 
 

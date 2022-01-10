@@ -764,10 +764,23 @@ paths:
                 items:
                   type: object
                   properties:
-                    fromId:
+                    id:
                       type: integer
-                    status:
+                    login:
                       type: string
+                    about:
+                      type: string
+                    avatar:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          title:
+                            type: string
         '400':    # status code
           description: Произошла ошибка
           content:
