@@ -2,6 +2,7 @@ const express = require('express')
 const db = require('../db')
 const { Op } = require('sequelize')
 const auth = require('../authorization')
+const {Tag} = require("../db");
 
 let friends = express.Router()
 friends.use(express.json())
@@ -12,31 +13,38 @@ friends.use(auth)
  * Получить все заявки в друзья
  */
 friends.get('/', async (req, res) => {
+
+    if (!req._id) {
+        return res.status(401).json({message: 'authorization error'})
+    }
+    let event = await db.Event.findByPk(req.params['id'])
+
+    if (event.creatorId !== req._id) {
+        return res.status(400).json({message: 'not your event'})
+    }
+
     let requestIds = (await db.FriendRequest.findAll({
         where: {
             FriendId: req._id,
             status: 'sent'
         }
     })).map(request => request.UserId)
+
     let users = (await db.User.findAll({
         attributes: ['id', 'avatar', 'login', 'about'],
         where: {
             id: {
                 [Op.in]: requestIds
             }
+        },
+        include: {
+            model: Tag,
+            as: 'tags',
+            through: {attributes: []}
         }
     }))
-    let usersWithTags = []
-    for (let user of users) {
-        usersWithTags.push({
-            id: user.id,
-            login: user.login,
-            about: user.about,
-            avatar: user.avatar,
-            tags: (await user.getTags()).map(tag => {return {id: tag.id, title: tag.title}})
-        })
-    }
-    res.json(usersWithTags)
+
+    res.json(users)
 })
 
 
