@@ -169,6 +169,171 @@ paths:
                         type: integer
 
   /user/:
+    get:
+      summary: Получение информации пользователя о себе
+      tags:
+        - "user"
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  login:
+                    type: string
+                  avatar:
+                    type: string
+                  about:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                  friendRequests:
+                    type: integer
+                  friendsList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        avatar:
+                          type: string
+                  favoriteEvents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        date:
+                          type: string
+                        address:
+                          type: string
+                        photo:
+                          type: string
+                        seats:
+                          type: integer
+                        tags:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              title:
+                                type: string
+                        isFavorite:
+                          type: boolean
+                        request:
+                          type: string
+                  requestedEvents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        date:
+                          type: string
+                        address:
+                          type: string
+                        photo:
+                          type: string
+                        seats:
+                          type: integer
+                        tags:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              title:
+                                type: string
+                        isFavorite:
+                          type: boolean
+                        request:
+                          type: string
+                  acceptedEvents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        date:
+                          type: string
+                        address:
+                          type: string
+                        photo:
+                          type: string
+                        seats:
+                          type: integer
+                        tags:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              title:
+                                type: string
+                        isFavorite:
+                          type: boolean
+                        request:
+                          type: string
+                  yourEvents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        date:
+                          type: string
+                        address:
+                          type: string
+                        photo:
+                          type: string
+                        seats:
+                          type: integer
+                        tags:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              title:
+                                type: string
+                        joinRequests:
+                          type: integer
+
     patch:
       summary: Изменение информации пользователя о себе
       tags:
@@ -248,10 +413,7 @@ paths:
                     isFavorite:
                       type: boolean
                     request:
-                      type: object
-                      properties:
-                        status:
-                          type: string
+                      type: string
 
   /feed/new:
     get:

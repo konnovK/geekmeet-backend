@@ -125,7 +125,7 @@ module.exports.Event = Event
  * Связь ивента и пользователя-создателя
  */
 Event.belongsTo(User, {as: 'Creator', foreignKey: 'creatorId'})
-User.hasMany(Event, {foreignKey: 'creatorId'})
+User.hasMany(Event, {as: 'MyEvents', foreignKey: 'creatorId'})
 
 
 
@@ -140,7 +140,7 @@ const JoinRequest = sequelize.define('JoinRequest', {
 }, {
     timestamps: false
 })
-User.belongsToMany(Event, {through: JoinRequest})
+User.belongsToMany(Event, {as: 'Member', through: JoinRequest})
 Event.belongsToMany(User, {as: 'Member', through: JoinRequest})
 module.exports.JoinRequest = JoinRequest
 
