@@ -70,6 +70,8 @@ paths:
                 properties:
                   token:
                     type: string
+                  id:
+                    type: integer
         '400':    # status code
           description: Произошла ошибка
           content:
@@ -109,6 +111,8 @@ paths:
                 properties:
                   token:
                     type: string
+                  id:
+                    type: integer
         '400':    # status code
           description: Произошла ошибка
           content:
