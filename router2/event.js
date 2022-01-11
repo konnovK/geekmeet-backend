@@ -263,6 +263,7 @@ event.post('/:id/request', async (req, res) => {
         return res.status(401).json({message: 'authorization error'})
     }
 
+
     if (await db.JoinRequest.findOne({
         where: {
             UserId: _id,
@@ -276,15 +277,15 @@ event.post('/:id/request', async (req, res) => {
                 EventId: event.id,
             }
         })
+        return res.json({message: 'delete request'})
     } else {
         await db.JoinRequest.create({
             UserId: _id,
             EventId: event.id,
             status: 'sent'
         })
+        return res.json({message: 'create request'})
     }
-
-    res.json()
 })
 
 
@@ -353,6 +354,87 @@ event.get('/:id/request', async (req, res) => {
     }))
 
     res.json(users)
+})
+
+/**
+ * Принять заявку пользователя на свой ивент
+ */
+event.patch('/:eventId/request/:userId/accept', async (req, res) => {
+    let eventId = req.params['eventId']
+    let userId = req.params['userId']
+
+    let event = (await db.Event.findByPk(eventId))
+
+    if (!event) {
+        return res.status(400).json({message: 'event with this id is not exists'})
+    }
+    if (event.creatorId !== req._id) {
+        return res.status(400).json({message: 'this event is not your'})
+    }
+
+    let request = await db.JoinRequest.findOne({
+        where: {
+            UserId: userId,
+            EventId: eventId
+        }
+    })
+
+    if (!request) {
+        return res.status(400).json({message: 'join request is not exists'})
+    }
+
+    if (request.status === 'accepted') {
+        return res.status(400).json({message: 'join request is already accepted'})
+    }
+
+    if (request.status === 'reject') {
+        return res.status(400).json({message: 'join request is already rejected'})
+    }
+
+    await request.update({status: 'accepted'})
+
+    res.send()
+})
+
+
+/**
+ * Отклонить заявку пользователя на свой ивент
+ */
+event.patch('/:eventId/request/:userId/reject', async (req, res) => {
+    let eventId = req.params['eventId']
+    let userId = req.params['userId']
+
+    let event = (await db.Event.findByPk(eventId))
+
+    if (!event) {
+        return res.status(400).json({message: 'event with this id is not exists'})
+    }
+    if (event.creatorId !== req._id) {
+        return res.status(400).json({message: 'this event is not your'})
+    }
+
+    let request = await db.JoinRequest.findOne({
+        where: {
+            UserId: userId,
+            EventId: eventId
+        }
+    })
+
+    if (!request) {
+        return res.status(400).json({message: 'join request is not exists'})
+    }
+
+    if (request.status === 'accepted') {
+        return res.status(400).json({message: 'join request is already accepted'})
+    }
+
+    if (request.status === 'reject') {
+        return res.status(400).json({message: 'join request is already rejected'})
+    }
+
+    await request.update({status: 'rejected'})
+
+    res.send()
 })
 
 
