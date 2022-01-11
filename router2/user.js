@@ -41,7 +41,7 @@ user.post('/login', async (req, res) => {
 
 
     let token = createToken(user[0])
-    res.json({token: token})
+    res.json({token: token, id: user[0].id})
 })
 
 
@@ -76,7 +76,7 @@ user.post('/register', async (req, res) => {
     }
 
     let token = createToken(user)
-    res.json({token: token})
+    res.json({token: token, id: user.id})
 })
 
 
