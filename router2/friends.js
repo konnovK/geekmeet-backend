@@ -70,8 +70,12 @@ friends.post('/:id', async (req, res) => {
         if (request.status === 'rejected') {
             return res.status(400).json({message: 'request is already rejected'})
         }
-        await request.destroy()
-        return res.json({message: 'delete request'})
+        if (request.UserId === req._id) {
+            await request.destroy()
+            return res.json({message: 'delete request'})
+        } else {
+            return res.status(400).json({message: `user ${id} has already sent friend request to you`})
+        }
     } else {
         await db.FriendRequest.create({
             UserId: req._id,
