@@ -24,12 +24,6 @@ const api2 = require('./router2/api')
 server.use('/api/v1', api)
 server.use('/api/v2', api2)
 
-
-if (DEBUG) {
-    const admin = require('./admin')
-    server.use('/admin', admin)
-}
-
 server.get('/', (req, res) => {
     res.send('it works!')
 })
@@ -43,6 +37,9 @@ if (DEBUG) {
         })
         res.send()
     })
+
+    const admin = require('./admin')
+    server.use('/admin', admin)
 }
 
 server.listen(80, async () => {
