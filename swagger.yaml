@@ -772,6 +772,78 @@ paths:
                   message:
                     type: string
 
+  /event/{eventId}/request/{userId}/accept:
+    patch:
+      summary: Принять заявку на ваш ивент
+      tags:
+        - event
+      parameters:
+        - name: eventId
+          description: id вашего ивента, на который подана заявка
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: userId
+          description: id пользователя, который подал заявку
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{eventId}/request/{userId}/reject:
+    patch:
+      summary: Отклонить заявку на ваш ивент
+      tags:
+        - event
+      parameters:
+        - name: eventId
+          description: id вашего ивента, на который подана заявка
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: userId
+          description: id пользователя, который подал заявку
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Действие произошло успешно
+        '400':    # status code
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
   /tag/:
     get:
       summary: Получение всех тэгов
